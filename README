@@ -1,0 +1,16 @@
+X-Plane Autopilot Interface
+
+-- Features --
+
+o Currently supports only Mac OS X (POSIX compliance will follow soon)
+o Tested only with X-Plane 9.x, but should work with v8 too
+
+-- Notes --
+
+o only 32-bit mode, because X-Plane is compiled in 32bit
+o 2.0.1 X-Plane SDK in SDK/ dir, feel free to customize
+
+-- Installation --
+
+ 1) type make 
+ 2) copy interface.xpl to Resources/plugins directory in X-Plane install dir
