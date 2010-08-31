@@ -1,5 +1,5 @@
 /*
- *  ui.c
+ *  interface.c
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -17,56 +17,11 @@
  *  
  */
 
-#include <stdio.h>
-#include <string.h>
-#include "XPLMDisplay.h"
-#include "XPLMGraphics.h"
-#include "settings.h"
-
-extern char ** lines;
-
 void redraw(
 	       XPLMWindowID inWindowID
-	    )
-{
-
-  int space = 13;
-  int left, top, right, bottom;
-  float	color[] = { 1.0, 1.0, 1.0 }; 	/* RGB White */
-  
-  XPLMGetWindowGeometry(inWindowID, &left, &top, &right, &bottom);
-
-    for(int i = 0; i < LINECOUNT; i++)
-      {
-	XPLMDrawString(
-		       color,
-		       left + 5,
-		       top - space,
-		       lines[i],
-		       NULL, /* no word-wrap */ 
-		       xplmFont_Basic);
-	space += OFFSET;
-      }  
-}
+	    );
 
 
 void printMsg(
 	      char * text
-	      )
-{
-  static int  counter = 0;
-
-  if(counter == LINECOUNT - 1)
-    {
-      for(int i = 1; i < LINECOUNT; i++)
-	{
-	  strcpy(lines[i-1], lines[i]);
-	}
-    }
-  strcpy(lines[counter], text);
-
-  if(counter < (LINECOUNT - 1))
-    {
-      counter++;
-    }
-}
+	      );

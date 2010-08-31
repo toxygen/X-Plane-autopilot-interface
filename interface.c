@@ -19,10 +19,13 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "XPLMDisplay.h"
 #include "XPLMGraphics.h"
+#include "ui.h"
 #include "settings.h"
 
+char **      lines    = NULL;
 XPLMWindowID gWindow  = NULL;
 int          gClicked = 0;
 
@@ -54,24 +57,31 @@ PLUGIN_API int XPluginStart(
 			    char * outSig,
 			    char * outDesc)
 {
-	/* First we must fill in the passed in buffers to describe our
-	 * plugin to the plugin-system. */
+  /* Inform X-Plane about plugin */
+  strcpy(outName, "AP Interface " VERSION);
+  strcpy(outSig, COMPANY "." PACKAGE "." PLUGIN);
+  strcpy(outDesc, "Interface for autopilot");
 
-	strcpy(outName, "AP Interface " VERSION);
-	strcpy(outSig, COMPANY "." PACKAGE "." PLUGIN);
-	strcpy(outDesc, "Interface for autopilot");
+  /* Create Buffer for Console */
+  lines = (char **) malloc (sizeof(char *) * LINECOUNT);
 
-	gWindow = XPLMCreateWindow(
-				   50,  /* left    */
-				   900,  /* top     */
-				   300, /* right   */
-				   800, /* bottom  */
-				   1,   /* visible */
-				   MyDrawWindowCallback, /* draw callback */
-				   MyHandleKeyCallback,  /* key handling callback */
-				   MyHandleMouseClickCallback, /* mouseclick handling callback */
-				   NULL);		
-	return 1;
+  for(int i = 0; i < LINECOUNT; i++)
+    {
+      lines[i] = (char *) calloc (256, sizeof(char));
+    }
+
+  /* Create Main Window */
+  gWindow = XPLMCreateWindow(
+			     50,  /* left    */
+			     900, /* top     */
+			     300, /* right   */
+			     800, /* bottom  */
+			     1,   /* visible */
+			     MyDrawWindowCallback,       /* draw callback */
+			     MyHandleKeyCallback,        /* key handling callback */
+			     MyHandleMouseClickCallback, /* mouseclick handling callback */
+			     NULL);		
+  return 1;
 }
 
 /*
@@ -115,15 +125,14 @@ void MyDrawWindowCallback(
 			  void *       inRefcon)
 {
   int left, top, right, bottom;
-  float	color[] = { 1.0, 1.0, 1.0 }; 	/* RGB White */
 
   /* get the size of window */
   XPLMGetWindowGeometry(inWindowID, &left, &top, &right, &bottom);
 
   /* draw dark shade in window */
-  XPLMDrawTranslucentDarkBox(left, top, right, bottom); 
-  winPrintf(inWindowID, "bubu");
-		
+  XPLMDrawTranslucentDarkBox(left, top, right, bottom);
+  redraw(inWindowID);
+
 }                                   
 
 /*
@@ -152,6 +161,9 @@ int MyHandleMouseClickCallback(
   /* toggle up and down mouse state */
   if ((inMouse == xplm_MouseDown) || (inMouse == xplm_MouseUp))
     gClicked = 1 - gClicked;
-	
+  if(gClicked)
+    printMsg("test1");
+  else
+    printMsg("test2");
   return 1;
 }                                      
