@@ -19,17 +19,19 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <pthread.h>
 #include "XPLMDisplay.h"
 #include "XPLMGraphics.h"
 #include "settings.h"
 
 extern char ** lines;
+extern pthread_mutex_t lines_m;
 
 void redraw(
 	       XPLMWindowID inWindowID
 	    )
 {
-
+  pthread_mutex_lock(&lines_m);
   int space = 13;
   int left, top, right, bottom;
   float	color[] = { 1.0, 1.0, 1.0 }; 	/* RGB White */
@@ -46,15 +48,20 @@ void redraw(
 		       NULL, /* no word-wrap */ 
 		       xplmFont_Basic);
 	space += OFFSET;
-      }  
+      }
+    pthread_mutex_unlock(&lines_m);
 }
 
 
+/* Function for printing to the log */
+/* TODO */
+/* create separate thread for processing printMsg */
 void printMsg(
 	      char * text
 	      )
 {
-  static int  counter = 0;
+  pthread_mutex_lock(&lines_m);
+  static int counter = 0;
 
   if(counter == LINECOUNT - 1)
     {
@@ -69,4 +76,5 @@ void printMsg(
     {
       counter++;
     }
+  pthread_mutex_unlock(&lines_m);
 }

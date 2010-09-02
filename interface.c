@@ -16,18 +16,33 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *  
  */
-
+ 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <pthread.h>
+#include <unistd.h>
 #include "XPLMDisplay.h"
 #include "XPLMGraphics.h"
 #include "ui.h"
 #include "settings.h"
+#include "server.h"
 
 char **      lines    = NULL;
 XPLMWindowID gWindow  = NULL;
 int          gClicked = 0;
+pthread_t    thread;
+pthread_mutex_t lines_m;
+
+void cleanup()
+{
+  for(int i = 0; i < LINECOUNT; i++)
+    {
+      free(lines[i]);
+    }
+  free(lines);
+  sock_cleanup();
+}
 
 void MyDrawWindowCallback(
 			  XPLMWindowID inWindowID,    
@@ -57,18 +72,27 @@ PLUGIN_API int XPluginStart(
 			    char * outSig,
 			    char * outDesc)
 {
+  int rc;
+  pthread_attr_t attr;
+  pthread_attr_init(&attr);
+  pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+
+
   /* Inform X-Plane about plugin */
   strcpy(outName, "AP Interface " VERSION);
   strcpy(outSig, COMPANY "." PACKAGE "." PLUGIN);
   strcpy(outDesc, "Interface for autopilot");
 
-  /* Create Buffer for Console */
+  /* Create buffer for console */
   lines = (char **) malloc (sizeof(char *) * LINECOUNT);
 
   for(int i = 0; i < LINECOUNT; i++)
     {
       lines[i] = (char *) calloc (256, sizeof(char));
     }
+
+  pthread_mutex_init(&lines_m, NULL);
+  
 
   /* Create Main Window */
   gWindow = XPLMCreateWindow(
@@ -80,7 +104,9 @@ PLUGIN_API int XPluginStart(
 			     MyDrawWindowCallback,       /* draw callback */
 			     MyHandleKeyCallback,        /* key handling callback */
 			     MyHandleMouseClickCallback, /* mouseclick handling callback */
-			     NULL);		
+			     NULL);
+  rc = pthread_create(&thread, NULL, server, NULL);
+  pthread_attr_destroy(&attr);
   return 1;
 }
 
@@ -89,7 +115,8 @@ PLUGIN_API int XPluginStart(
  */
 PLUGIN_API void	XPluginStop(void)
 {
-	XPLMDestroyWindow(gWindow);
+  XPLMDestroyWindow(gWindow);
+  cleanup();
 }
 
 /*
@@ -97,6 +124,8 @@ PLUGIN_API void	XPluginStop(void)
  */
 PLUGIN_API void XPluginDisable(void)
 {
+  pthread_cancel(thread);
+  pthread_mutex_destroy(&lines_m);
 }
 
 /*
@@ -104,7 +133,7 @@ PLUGIN_API void XPluginDisable(void)
  */
 PLUGIN_API int XPluginEnable(void)
 {
-	return 1;
+  return 1;
 }
 
 /*
