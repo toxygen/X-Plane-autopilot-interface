@@ -8,27 +8,27 @@ public:
 
 						XPCProcess();
 	virtual				~XPCProcess();
-	
+
 			void		StartProcessTime(float	inSeconds);
 			void		StartProcessCycles(long	inCycles);
 			void		StopProcess(void);
 
 	virtual	void		DoProcessing(
-							float 				inElapsedSinceLastCall, 
+							float 				inElapsedSinceLastCall,
 							float				inElapsedTimeSinceLastFlightLoop,
 							int 				inCounter)=0;
 
 private:
 
 	static	float	FlightLoopCB(
-							float 				inElapsedSinceLastCall, 
+							float 				inElapsedSinceLastCall,
 							float				inElapsedTimeSinceLastFlightLoop,
-							int 				inCounter, 
+							int 				inCounter,
 							void * 				inRefcon);
-						
+
 		bool		mInCallback;
 		float		mCallbackTime;
-		
+
 	XPCProcess(const XPCProcess&);
 	XPCProcess& operator=(const XPCProcess&);
 

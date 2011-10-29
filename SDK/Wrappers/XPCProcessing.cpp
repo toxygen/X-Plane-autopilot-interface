@@ -12,7 +12,7 @@ XPCProcess::~XPCProcess()
 {
 	XPLMUnregisterFlightLoopCallback(FlightLoopCB, reinterpret_cast<void *>(this));
 }
-	
+
 void		XPCProcess::StartProcessTime(float	inSeconds)
 {
 	mCallbackTime = inSeconds;
@@ -39,9 +39,9 @@ void		XPCProcess::StopProcess(void)
 
 
 float	XPCProcess::FlightLoopCB(
-						float 				inElapsedSinceLastCall, 
+						float 				inElapsedSinceLastCall,
 						float				inElapsedTimeSinceLastFlightLoop,
-						int 				inCounter, 
+						int 				inCounter,
 						void * 				inRefcon)
 {
 	XPCProcess * me = reinterpret_cast<XPCProcess *>(inRefcon);

@@ -40,7 +40,7 @@ public:
 								bool			inVkey,
 								XPCListener *	inListener);
 	virtual			~XPCKeyMessageAttachment();
-									
+
 	virtual	int		HandleWidgetMessage(
 								XPCWidget *		inObject,
 								XPWidgetMessage	inMessage,
@@ -55,7 +55,7 @@ private:
 		long	mMsg;
 		void *	mParam;
 		bool	mConsume;
-	
+
 };
 
 class	XPCPushButtonMessageAttachment : public XPCWidgetAttachment, XPCBroadcaster {

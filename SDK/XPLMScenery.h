@@ -3,15 +3,15 @@
 
 /*
  * Copyright 2005 Sandy Barbour and Ben Supnik
- * 
+ *
  * All rights reserved.  See license.txt for usage.
- * 
- * X-Plane SDK Version: 1.0.2                                                  
+ *
+ * X-Plane SDK Version: 1.0.2
  *
  */
 
 /*
- * This package contains APIs to interact with X-Plane's scenery system.       
+ * This package contains APIs to interact with X-Plane's scenery system.
  *
  */
 
@@ -26,30 +26,30 @@ extern "C" {
  * Terrain Y-Testing
  ***************************************************************************/
 /*
- * The Y-testing API allows you to locate the physical scenery mesh.  This 
- * would be used to place dynamic  graphics on top of the ground in a 
- * plausible way or do physics interactions. 
- * 
- * The Y-test API works via probe objects, which are allocated by your plugin 
- * and used to query terrain. Probe objects exist both to capture which 
- * algorithm you have requested (see probe types) and also to cache query 
- * information. 
- * 
- * Performance guidelines: It is generally faster to use the same probe for 
- * nearby points and different probes for different points. Try not to 
- * allocate more than "hundreds" of probes at most.  Share probes if you need 
- * more. Generally, probing operations are expensive, and should be avoided 
- * via caching when possible. 
- * 
- * Y testing returns a location on the terrain, a normal vectory, and a 
- * velocity vector.  The normal vector tells you the slope of the terrain at 
- * that point.  The velocity vector tells you if that terrain is moving (and 
- * is in meters/second). For example, if your Y test hits the aircraft carrier 
- * deck, this tells you the velocity of that point on the deck. 
- * 
- * Note: the Y-testing API is limited to probing the loaded scenery area, 
- * which is approximately 300x300 km in X-Plane 9.  Probes outside this area 
- * will return the height of a 0 MSL sphere.                                   
+ * The Y-testing API allows you to locate the physical scenery mesh.  This
+ * would be used to place dynamic  graphics on top of the ground in a
+ * plausible way or do physics interactions.
+ *
+ * The Y-test API works via probe objects, which are allocated by your plugin
+ * and used to query terrain. Probe objects exist both to capture which
+ * algorithm you have requested (see probe types) and also to cache query
+ * information.
+ *
+ * Performance guidelines: It is generally faster to use the same probe for
+ * nearby points and different probes for different points. Try not to
+ * allocate more than "hundreds" of probes at most.  Share probes if you need
+ * more. Generally, probing operations are expensive, and should be avoided
+ * via caching when possible.
+ *
+ * Y testing returns a location on the terrain, a normal vectory, and a
+ * velocity vector.  The normal vector tells you the slope of the terrain at
+ * that point.  The velocity vector tells you if that terrain is moving (and
+ * is in meters/second). For example, if your Y test hits the aircraft carrier
+ * deck, this tells you the velocity of that point on the deck.
+ *
+ * Note: the Y-testing API is limited to probing the loaded scenery area,
+ * which is approximately 300x300 km in X-Plane 9.  Probes outside this area
+ * will return the height of a 0 MSL sphere.
  *
  */
 
@@ -58,10 +58,10 @@ extern "C" {
 
 /*
  * XPLMProbeType
- * 
- * XPLMProbeType defines the type of terrain probe - each probe has a 
- * different algorithm.  (Only one type of probe is provided right now, but 
- * future APIs will expose more flexible or poewrful or useful probes.         
+ *
+ * XPLMProbeType defines the type of terrain probe - each probe has a
+ * different algorithm.  (Only one type of probe is provided right now, but
+ * future APIs will expose more flexible or poewrful or useful probes.
  *
  */
 enum {
@@ -75,8 +75,8 @@ typedef int XPLMProbeType;
 
 /*
  * XPLMProbeResult
- * 
- * Probe results - possible results from a probe query.                        
+ *
+ * Probe results - possible results from a probe query.
  *
  */
 enum {
@@ -97,18 +97,18 @@ typedef int XPLMProbeResult;
 
 /*
  * XPLMProbeRef
- * 
- * An XPLMProbeRef is an opaque handle to a probe, used for querying the 
- * terrain.                                                                    
+ *
+ * An XPLMProbeRef is an opaque handle to a probe, used for querying the
+ * terrain.
  *
  */
 typedef void * XPLMProbeRef;
 
 /*
  * XPLMProbeInfo_t
- * 
- * XPLMProbeInfo_t contains the results of a probe call.  Make sure to set 
- * structSize to the size of the struct before using it.                       
+ *
+ * XPLMProbeInfo_t contains the results of a probe call.  Make sure to set
+ * structSize to the size of the struct before using it.
  *
  */
 typedef struct {
@@ -141,37 +141,37 @@ typedef struct {
 
 /*
  * XPLMCreateProbe
- * 
- * Creates a new probe object of a given type and returns.                     
+ *
+ * Creates a new probe object of a given type and returns.
  *
  */
 XPLM_API XPLMProbeRef         XPLMCreateProbe(
-                                   XPLMProbeType        inProbeType);    
+                                   XPLMProbeType        inProbeType);
 
 /*
  * XPLMDestroyProbe
- * 
- * Deallocates an existing probe object.                                       
+ *
+ * Deallocates an existing probe object.
  *
  */
 XPLM_API void                 XPLMDestroyProbe(
-                                   XPLMProbeRef         inProbe);    
+                                   XPLMProbeRef         inProbe);
 
 /*
  * XPLMProbeTerrainXYZ
- * 
- * Probes the terrain.  Pass in the XYZ coordinate of the probe point, a probe 
- * object, and an XPLMProbeInfo_t struct that  has its structSize member set 
- * properly.  Other fields are filled in if we hit terrain, and a probe result 
- * is returned.                                                                
+ *
+ * Probes the terrain.  Pass in the XYZ coordinate of the probe point, a probe
+ * object, and an XPLMProbeInfo_t struct that  has its structSize member set
+ * properly.  Other fields are filled in if we hit terrain, and a probe result
+ * is returned.
  *
  */
 XPLM_API XPLMProbeResult      XPLMProbeTerrainXYZ(
-                                   XPLMProbeRef         inProbe,    
-                                   float                inX,    
-                                   float                inY,    
-                                   float                inZ,    
-                                   XPLMProbeInfo_t *    outInfo);    
+                                   XPLMProbeRef         inProbe,
+                                   float                inX,
+                                   float                inY,
+                                   float                inZ,
+                                   XPLMProbeInfo_t *    outInfo);
 
 #endif /* XPLM200 */
 #if defined(XPLM200)
@@ -179,10 +179,10 @@ XPLM_API XPLMProbeResult      XPLMProbeTerrainXYZ(
  * Object Drawing
  ***************************************************************************/
 /*
- * The object drawing routines let you load and draw X-Plane OBJ files.  
- * Objects are loaded by file path and managed via an opaque handle.  X-Plane 
- * naturally reference counts objects, so it is important that you balance 
- * every successful call to XPLMLoadObject with a call to XPLMUnloadObject!    
+ * The object drawing routines let you load and draw X-Plane OBJ files.
+ * Objects are loaded by file path and managed via an opaque handle.  X-Plane
+ * naturally reference counts objects, so it is important that you balance
+ * every successful call to XPLMLoadObject with a call to XPLMUnloadObject!
  *
  */
 
@@ -191,19 +191,19 @@ XPLM_API XPLMProbeResult      XPLMProbeTerrainXYZ(
 
 /*
  * XPLMObjectRef
- * 
- * An XPLMObjectRef is a opaque handle to an .obj file that has been loaded 
- * into memory.                                                                
+ *
+ * An XPLMObjectRef is a opaque handle to an .obj file that has been loaded
+ * into memory.
  *
  */
 typedef void * XPLMObjectRef;
 
 /*
  * XPLMDrawInfo_t
- * 
- * The XPLMDrawInfo_t structure contains positioning info for one object that 
- * is to be drawn. Be sure to set structSize to the size of the structure for 
- * future expansion.                                                           
+ *
+ * The XPLMDrawInfo_t structure contains positioning info for one object that
+ * is to be drawn. Be sure to set structSize to the size of the structure for
+ * future expansion.
  *
  */
 typedef struct {
@@ -225,73 +225,73 @@ typedef struct {
 
 /*
  * XPLMLoadObject
- * 
- * This routine loads an OBJ file and returns a handle to it.  If X-plane has 
- * already loaded the object, the handle to the existing object is returned.  
- * Do not assume you will get the same handle back twice, but do make sure to  
- * call unload once for every load to avoid "leaking" objects.  The object 
- * will be purged from memory when no plugins and no scenery are using it. 
- * 
- * The path for the object must be relative to the X-System base folder.  If 
- * the path is in the root of the X-System folder you may need to prepend ./ 
- * to it; loading objects in the root of the X-System folder is STRONGLY 
- * discouraged - your plugin should not dump art resources in the root folder! 
- * 
- * 
- * XPLMLoadObject will return NULL if the object cannot be loaded (either 
- * because it is not found or the file is misformatted). This routine will 
- * load any object that can be used in the X-Plane scenery system. 
- * 
- * It is important that the datarefs an object uses for animation already be 
- * loaded before you load the object.  For this reason it may be necessary to 
- * defer object loading until the sim has fully started.                       
+ *
+ * This routine loads an OBJ file and returns a handle to it.  If X-plane has
+ * already loaded the object, the handle to the existing object is returned.
+ * Do not assume you will get the same handle back twice, but do make sure to
+ * call unload once for every load to avoid "leaking" objects.  The object
+ * will be purged from memory when no plugins and no scenery are using it.
+ *
+ * The path for the object must be relative to the X-System base folder.  If
+ * the path is in the root of the X-System folder you may need to prepend ./
+ * to it; loading objects in the root of the X-System folder is STRONGLY
+ * discouraged - your plugin should not dump art resources in the root folder!
+ *
+ *
+ * XPLMLoadObject will return NULL if the object cannot be loaded (either
+ * because it is not found or the file is misformatted). This routine will
+ * load any object that can be used in the X-Plane scenery system.
+ *
+ * It is important that the datarefs an object uses for animation already be
+ * loaded before you load the object.  For this reason it may be necessary to
+ * defer object loading until the sim has fully started.
  *
  */
 XPLM_API XPLMObjectRef        XPLMLoadObject(
-                                   const char *         inPath);    
+                                   const char *         inPath);
 
 /*
  * XPLMDrawObjects
- * 
- * XPLMDrawObjects draws an object from an OBJ file one or more times.  You 
- * pass in the object and an array of  XPLMDrawInfo_t structs, one for each 
- * place you would like the object to be drawn. 
- * 
- * X-Plane will attempt to cull the objects based on LOD and visibility, and 
- * will pick the appropriate LOD. 
- * 
- * Lighting is a boolean; pass 1 to show the night version of object with 
- * night-only lights lit up.  Pass 0 to show the daytime version of the 
- * object. 
- * 
- * earth_relative controls the coordinate system.  If this is 1, the rotations 
- * you specify are applied to the object after its coordinate system is 
- * transformed from local to earth-relative coordinates -- that is, an object 
- * with no rotations will point toward true north and the Y axis will be up 
- * against gravity.  If this is 0, the object is drawn with your rotations 
- * from local coordanates -- that is, an object with no rotations is drawn 
- * pointing down the -Z axis and the Y axis of the object matches the local 
- * coordinate Y axis.                                                          
+ *
+ * XPLMDrawObjects draws an object from an OBJ file one or more times.  You
+ * pass in the object and an array of  XPLMDrawInfo_t structs, one for each
+ * place you would like the object to be drawn.
+ *
+ * X-Plane will attempt to cull the objects based on LOD and visibility, and
+ * will pick the appropriate LOD.
+ *
+ * Lighting is a boolean; pass 1 to show the night version of object with
+ * night-only lights lit up.  Pass 0 to show the daytime version of the
+ * object.
+ *
+ * earth_relative controls the coordinate system.  If this is 1, the rotations
+ * you specify are applied to the object after its coordinate system is
+ * transformed from local to earth-relative coordinates -- that is, an object
+ * with no rotations will point toward true north and the Y axis will be up
+ * against gravity.  If this is 0, the object is drawn with your rotations
+ * from local coordanates -- that is, an object with no rotations is drawn
+ * pointing down the -Z axis and the Y axis of the object matches the local
+ * coordinate Y axis.
  *
  */
 XPLM_API void                 XPLMDrawObjects(
-                                   XPLMObjectRef        inObject,    
-                                   int                  inCount,    
-                                   XPLMDrawInfo_t *     inLocations,    
-                                   int                  lighting,    
-                                   int                  earth_relative);    
+                                   XPLMObjectRef        inObject,
+                                   int                  inCount,
+                                   XPLMDrawInfo_t *     inLocations,
+                                   int                  lighting,
+                                   int                  earth_relative);
 
 /*
  * XPLMUnloadObject
- * 
- * This routine marks an object as no longer being used by your plugin.  
- * Objects are reference counted: once no plugins are using an object, it is 
- * purged from memory.  Make sure to call XPLMUnloadObject once for each 
- * successful call to XPLMLoadObject.                                          
+ *
+ * This routine marks an object as no longer being used by your plugin.
+ * Objects are reference counted: once no plugins are using an object, it is
+ * purged from memory.  Make sure to call XPLMUnloadObject once for each
+ * successful call to XPLMLoadObject.
  *
  */
 XPLM_API void                 XPLMUnloadObject(
-                                   XPLMObjectRef        inObject);    
+                                   XPLMObjectRef        inObject);
 
 #endif /* XPLM200 */
 #if defined(XPLM200)
@@ -299,10 +299,10 @@ XPLM_API void                 XPLMUnloadObject(
  * Library Access
  ***************************************************************************/
 /*
- * The library access routines allow you to locate scenery objects via the 
- * X-Plane library system.  Right now library access is only provided for 
- * objects, allowing plugin-drawn objects to be extended using the library 
- * system.                                                                     
+ * The library access routines allow you to locate scenery objects via the
+ * X-Plane library system.  Right now library access is only provided for
+ * objects, allowing plugin-drawn objects to be extended using the library
+ * system.
  *
  */
 
@@ -311,36 +311,36 @@ XPLM_API void                 XPLMUnloadObject(
 
 /*
  * XPLMLibraryEnumerator_f
- * 
- * An XPLMLibraryEnumerator_f is a callback you provide that is called once 
- * for each library element that is located. The returned paths will be 
- * relative to the X-System folder.                                            
+ *
+ * An XPLMLibraryEnumerator_f is a callback you provide that is called once
+ * for each library element that is located. The returned paths will be
+ * relative to the X-System folder.
  *
  */
 typedef void (* XPLMLibraryEnumerator_f)(
-                                   const char *         inFilePath,    
-                                   void *               inRef);    
+                                   const char *         inFilePath,
+                                   void *               inRef);
 
 /*
  * XPLMLookupObjects
- * 
- * This routine looks up a virtual path in the library system and returns all 
- * matching elements.  You provide a callback -  one virtual path may match 
- * many objects in the library.  XPLMLookupObjects returns the number of 
- * objects found. 
- * 
- * The latitude and longitude parameters specify the location the object will 
- * be used.  The library system allows for scenery packages to only provide 
- * objects to certain local locations.  Only objects that are allowed at the 
- * latitude/longitude you provide will be returned.                            
+ *
+ * This routine looks up a virtual path in the library system and returns all
+ * matching elements.  You provide a callback -  one virtual path may match
+ * many objects in the library.  XPLMLookupObjects returns the number of
+ * objects found.
+ *
+ * The latitude and longitude parameters specify the location the object will
+ * be used.  The library system allows for scenery packages to only provide
+ * objects to certain local locations.  Only objects that are allowed at the
+ * latitude/longitude you provide will be returned.
  *
  */
 XPLM_API int                  XPLMLookupObjects(
-                                   const char *         inPath,    
-                                   float                inLatitude,    
-                                   float                inLongitude,    
-                                   XPLMLibraryEnumerator_f enumerator,    
-                                   void *               ref);    
+                                   const char *         inPath,
+                                   float                inLatitude,
+                                   float                inLongitude,
+                                   XPLMLibraryEnumerator_f enumerator,
+                                   void *               ref);
 
 #endif /* XPLM200 */
 #ifdef __cplusplus

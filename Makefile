@@ -19,7 +19,7 @@ interface: interface.c
 	$(CC) ${CFLAGS} -I${SDKDIR} -DAPL=${APL} -DIBM=${IBM} interface.c -o interface.o -flat_namespace -undefined dynamic_lookup -arch i386 -c
 
 link: ui.o interface.o server.o
-	$(CC) ${OBJECTS} -o interface.xpl -dynamiclib -flat_namespace -undefined dynamic_lookup -arch i386 
+	$(CC) ${OBJECTS} -o interface.xpl -dynamiclib -flat_namespace -undefined dynamic_lookup -arch i386
 
 ui: ui.c
 	$(CC) ${CFLAGS} -I${SDKDIR} -DAPL=${APL} -DIBM=${IBM} ui.c -o ui.o -flat_namespace -undefined dynamic_lookup -arch i386 -c

@@ -1,5 +1,5 @@
 #include "XPCAircraft.h"
-	
+
 XPCAircraft::XPCAircraft(
 					const char *			inICAOCode,
 					const char *			inLivery)
@@ -7,7 +7,7 @@ XPCAircraft::XPCAircraft(
 	mPlane = XPLMCreatePlane(inICAOCode, inLivery, AircraftCB,
 					reinterpret_cast<void *>(this));
 }
-					
+
 XPCAircraft::~XPCAircraft()
 {
 	XPLMDestroyPlane(mPlane);

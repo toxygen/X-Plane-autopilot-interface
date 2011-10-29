@@ -2,7 +2,7 @@
                               THE X-PLANE PLUGIN SDK
 -------------------------------------------------------------------------------
 
-This download contains the files necessary to build plugins for X-Plane.  The 
+This download contains the files necessary to build plugins for X-Plane.  The
 X-Plane plugin website is:
 
 http://www.xsquawkbox.net/xpsdk/
@@ -18,7 +18,7 @@ xplanesdk@xsquawkbox.net
 Please do not email Austin or Laminar Research for SDK questions or support;
 the SDK is a third party effort.
 
-the X-Plane developer mailing list is an unlisted yahoo group frequented by 
+the X-Plane developer mailing list is an unlisted yahoo group frequented by
 many X-Plane developers.
 
 x-plane-dev@yahoogroups.com
@@ -34,7 +34,7 @@ Delphi		Interfaces for compiling Pascal plugins
 Libraries	Import libraries for linking on Windows.
 
 Note: there are no import/link-time libraries for Mac (Mach-O) or Linux; on
-these platforms, plugins simply leave SDK symbols undefined and they are 
+these platforms, plugins simply leave SDK symbols undefined and they are
 discovered at runtime.  The SDK website explains this process in more detail.
 
 Mac CFM plugins are not supported by the 2.0 SDK; the 2.0 SDK requires X-Plane
@@ -61,7 +61,7 @@ the new 2.0 APIs.
 
 X-Plane SDK Release 2.0 Beta 2 4/23/08
 
-This release includes new APIs for reading and writing data files and drawing 
+This release includes new APIs for reading and writing data files and drawing
 hooks for the local map screen, as well as some minor tweaks:
 
 - Sim version is 2.0 in the headers.
@@ -77,7 +77,7 @@ to cover the SDK include/import lib files and not the sample code or examples.
 
 X-Plane SDK Release 1.0.2 1/5/05
 
-The headers of the SDK are modified to support Kylix.  No changes for Mac, 
+The headers of the SDK are modified to support Kylix.  No changes for Mac,
 Windows, or C users.  Headers now have SDK version numbers.
 
 X-Plane SDK Release 1.0.1 12/29/04
@@ -88,73 +88,73 @@ for Mac and Windows users.
 X-Plane SDK Release Candidate 1
 
 Only one slight change in the enums: the enum xpProperty_SubWindowHasCloseBoxes
-in XPStandardWidgets.h has been changed to xpProperty_MainWindowHasCloseBoxes.  
+in XPStandardWidgets.h has been changed to xpProperty_MainWindowHasCloseBoxes.
 Its value has not been changed, so you will need to search-and-replace your code
-when using this version of the SDK, but already-compiled plugins will experience 
+when using this version of the SDK, but already-compiled plugins will experience
 no different operation.
 
-The documentation has been revised for all headers to revise changes made to the 
+The documentation has been revised for all headers to revise changes made to the
 SDK over the course of beta.
 
 X-Plane SDK Beta 5
 
 This version of the SDK features a number of enumeration changes to reflect the
-X-Plane interface more correctly.  This became crucial when X-Plane 7's new user 
-interface was released.  With X-Plane in release candidates hopefully beta 5 of 
+X-Plane interface more correctly.  This became crucial when X-Plane 7's new user
+interface was released.  With X-Plane in release candidates hopefully beta 5 of
 the SDK could be the last one.  Please see:
 
 www.xsquawkbox.net/xpsdk/newui.html
 
-For a comprehensive description of all the enumeration changes.  For most 
-plugins (no developers reported using the deprecated enumerations), a simple 
+For a comprehensive description of all the enumeration changes.  For most
+plugins (no developers reported using the deprecated enumerations), a simple
 search and replace should suffice.  Plugins compiled against the beta 4 SDK that
 do not use now-unsupported graphics will continue to work correctly.
 
 X-Plane SDK Beta 4
 
-This release corrects two problems with the Pascal headers: function pointer 
-types are now declared cdecl (since this is how the SDK calls them), and the 
+This release corrects two problems with the Pascal headers: function pointer
+types are now declared cdecl (since this is how the SDK calls them), and the
 import library for the widget callbacks is now XPWIDGETS.DLL as it should be.
 
 X-Plane SDK Beta 3
 
-This release finally features full documentation and a stable widgets API, as 
+This release finally features full documentation and a stable widgets API, as
 well as a few other minor bug fixes.
 
-Starting with beta 3, the DLLs necessary to run plugins ship with X-Plane 660.  
-The SDK will work with X-Plane 660 RC3 and later.  The XPWidgets DLL now lives 
+Starting with beta 3, the DLLs necessary to run plugins ship with X-Plane 660.
+The SDK will work with X-Plane 660 RC3 and later.  The XPWidgets DLL now lives
 in the Resources/plugins folder.
 
-Starting with beta 3, extra plugins, documentation, sample code, and sample 
-projects are now featured directly on the web in the new X-Plane SDK library.  
-They are not included in the SDK zip file; the zip file only contains headers 
+Starting with beta 3, extra plugins, documentation, sample code, and sample
+projects are now featured directly on the web in the new X-Plane SDK library.
+They are not included in the SDK zip file; the zip file only contains headers
 and lib files for the SDK.
 
 X-Plane SDK Beta 2
 
-You must recompile your plugin for the beta 2 plugin SDK!  Plugins compiled 
+You must recompile your plugin for the beta 2 plugin SDK!  Plugins compiled
 against the beta 1 SDK will not work with X-Plane 660 or the new XPLM.DLL.
 
-A huge number of data refs have been added.  Unfortunately the documentation 
-is thin.  Use the data ref tester plugin to view the data refs in real time 
+A huge number of data refs have been added.  Unfortunately the documentation
+is thin.  Use the data ref tester plugin to view the data refs in real time
 and find what you need.
 
-The data ref APIs have also changed to allow for arrays of integers as well 
-as floats.  Some sim variables are now arrays that were previously many 
+The data ref APIs have also changed to allow for arrays of integers as well
+as floats.  Some sim variables are now arrays that were previously many
 individual items.
 
-A new drawing phase is available for replacing aircraft graphics.  The 
-texturing APIs in XPLMGraphics have been revised.  The most notable change is 
-that you cannot use the SDK to load your textures.  (This functionality was 
-broken and never worked in beta 1.)  See the x-plane-dev list for sample code 
+A new drawing phase is available for replacing aircraft graphics.  The
+texturing APIs in XPLMGraphics have been revised.  The most notable change is
+that you cannot use the SDK to load your textures.  (This functionality was
+broken and never worked in beta 1.)  See the x-plane-dev list for sample code
 on how to load your own bitmaps.
 
-X-Plane can reload plugins on the fly.  Use the Plugin Enabler plugin to reload 
-your plugin.  On the Mac you can throw the old DLL in the trash and put a new 
-one in its place to reload a new version of the plugin.  On the PC, an alert 
-comes up; while this alert is up you can swap your plugins' DLL.  This allows 
+X-Plane can reload plugins on the fly.  Use the Plugin Enabler plugin to reload
+your plugin.  On the Mac you can throw the old DLL in the trash and put a new
+one in its place to reload a new version of the plugin.  On the PC, an alert
+comes up; while this alert is up you can swap your plugins' DLL.  This allows
 you to recompile your plugin without rebooting the sim.
 
-Delphi Pascal interfaces and sample code are in the SDK.  Thanks to Billy 
+Delphi Pascal interfaces and sample code are in the SDK.  Thanks to Billy
 Verreynne for his hard work on this.
 

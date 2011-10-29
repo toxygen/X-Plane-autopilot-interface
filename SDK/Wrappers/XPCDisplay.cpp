@@ -3,7 +3,7 @@
 XPCKeySniffer::XPCKeySniffer(int inBeforeWindows) : mBeforeWindows(inBeforeWindows)
 {
 	XPLMRegisterKeySniffer(KeySnifferCB, mBeforeWindows, reinterpret_cast<void *>(this));
-}	
+}
 
 XPCKeySniffer::~XPCKeySniffer()
 {
@@ -12,14 +12,14 @@ XPCKeySniffer::~XPCKeySniffer()
 
 
 int		XPCKeySniffer::KeySnifferCB(
-				char 			inCharKey, 
+				char 			inCharKey,
 				XPLMKeyFlags	inFlags,
 				char			inVirtualKey,
 				void * 			inRefCon)
 {
 	XPCKeySniffer * me = reinterpret_cast<XPCKeySniffer *>(inRefCon);
 	return me->HandleKeyStroke(inCharKey, inFlags, inVirtualKey);
-}				
+}
 
 XPCWindow::XPCWindow(
 						int					inLeft,
@@ -46,7 +46,7 @@ void	XPCWindow::GetWindowGeometry(
 {
 	XPLMGetWindowGeometry(mWindow, outLeft, outTop, outRight, outBottom);
 }
-			
+
 void	XPCWindow::SetWindowGeometry(
 			int					inLeft,
 			int					inTop,
@@ -66,7 +66,7 @@ void	XPCWindow::SetWindowIsVisible(
 {
 	XPLMSetWindowIsVisible(mWindow, inIsVisible);
 }
-			
+
 void	XPCWindow::TakeKeyboardFocus(void)
 {
 	XPLMTakeKeyboardFocus(mWindow);
@@ -81,7 +81,7 @@ int		XPCWindow::IsWindowInFront(void)
 {
 	return XPLMIsWindowInFront(mWindow);
 }
-		
+
 void	XPCWindow::DrawCB(XPLMWindowID inWindowID, void * inRefcon)
 {
 	XPCWindow * me = reinterpret_cast<XPCWindow *>(inRefcon);

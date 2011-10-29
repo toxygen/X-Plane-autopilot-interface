@@ -12,5 +12,5 @@ o 2.0.1 X-Plane SDK in SDK/ dir, feel free to customize
 
 -- Installation --
 
- 1) type make 
+ 1) type make
  2) copy interface.xpl to Resources/plugins directory in X-Plane install dir

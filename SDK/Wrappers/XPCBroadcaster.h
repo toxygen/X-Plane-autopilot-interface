@@ -11,12 +11,12 @@ public:
 
 						XPCBroadcaster();
 	virtual				~XPCBroadcaster();
-	
+
 			void		AddListener(
 							XPCListener *	inListener);
 			void		RemoveListener(
 							XPCListener *	inListener);
-	
+
 protected:
 
 			void		BroadcastMessage(
@@ -26,11 +26,11 @@ protected:
 private:
 
 	typedef	std::vector<XPCListener *>	ListenerVector;
-	
+
 		ListenerVector	mListeners;
 
 	// Reentrancy support
-	
+
 	ListenerVector::iterator *	mIterator;
 
 };
