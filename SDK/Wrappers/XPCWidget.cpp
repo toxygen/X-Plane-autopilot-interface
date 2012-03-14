@@ -22,10 +22,10 @@ XPCWidget::XPCWidget(
 		inIsRoot ? NULL : inParent,
 		inClass);
 
-	XPSetWidgetProperty(mWidget, xpProperty_Object, reinterpret_cast<long>(this));		
+	XPSetWidgetProperty(mWidget, xpProperty_Object, reinterpret_cast<long>(this));
 	XPAddWidgetCallback(mWidget, WidgetCallback);
-}								
-						
+}
+
 XPCWidget::XPCWidget(
 	XPWidgetID				inWidget,
 	bool					inOwnsWidget) :
@@ -33,7 +33,7 @@ XPCWidget::XPCWidget(
 	mOwnsChildren(false),
 	mOwnsWidget(inOwnsWidget)
 {
-	XPSetWidgetProperty(mWidget, xpProperty_Object, reinterpret_cast<long>(this));		
+	XPSetWidgetProperty(mWidget, xpProperty_Object, reinterpret_cast<long>(this));
 	XPAddWidgetCallback(mWidget, WidgetCallback);
 }
 
@@ -42,7 +42,7 @@ XPCWidget::~XPCWidget()
 	if (mOwnsWidget)
 		XPDestroyWidget(mWidget, mOwnsChildren ? 1 : 0);
 }
-	
+
 void		XPCWidget::SetOwnsWidget(
 					bool 					inOwnsWidget)
 {
@@ -53,7 +53,7 @@ void		XPCWidget::SetOwnsChildren(
 					bool 					inOwnsChildren)
 {
 	mOwnsChildren = inOwnsChildren;
-}					
+}
 
 XPCWidget::operator XPWidgetID () const
 {
@@ -66,7 +66,7 @@ XPWidgetID XPCWidget::Get(void) const
 }
 
 void		XPCWidget::AddAttachment(
-								XPCWidgetAttachment * 	inAttachment, 
+								XPCWidgetAttachment * 	inAttachment,
 								bool 					inOwnsAttachment,
 								bool					inPrefilter)
 {
@@ -76,7 +76,7 @@ void		XPCWidget::AddAttachment(
 	} else {
 		mAttachments.push_back(AttachmentInfo(inAttachment, inOwnsAttachment));
 	}
-}								
+}
 
 void		XPCWidget::RemoveAttachment(
 								XPCWidgetAttachment * 	inAttachment)
@@ -90,7 +90,7 @@ void		XPCWidget::RemoveAttachment(
 			return;
 		}
 	}
-}								
+}
 
 int			XPCWidget::HandleWidgetMessage(
 								XPWidgetMessage			inMessage,
@@ -99,8 +99,8 @@ int			XPCWidget::HandleWidgetMessage(
 								long					inParam2)
 {
 	return 0;
-}								
-		
+}
+
 int			XPCWidget::WidgetCallback(
 								XPWidgetMessage			inMessage,
 								XPWidgetID				inWidget,
@@ -110,8 +110,8 @@ int			XPCWidget::WidgetCallback(
 	XPCWidget * me = reinterpret_cast<XPCWidget *>(XPGetWidgetProperty(inWidget, xpProperty_Object, NULL));
 	if (me == NULL)
 		return 0;
-	
-	for (AttachmentVector::iterator iter = me->mAttachments.begin(); iter != 
+
+	for (AttachmentVector::iterator iter = me->mAttachments.begin(); iter !=
 		me->mAttachments.end(); ++iter)
 	{
 		int result = iter->first->HandleWidgetMessage(me, inMessage, inWidget, inParam1, inParam2);
@@ -120,4 +120,4 @@ int			XPCWidget::WidgetCallback(
 	}
 
 	return me->HandleWidgetMessage(inMessage, inWidget, inParam1, inParam2);
-}								
+}

@@ -16,7 +16,7 @@ public:
 								XPWidgetID		inWidget,
 								long			inParam1,
 								long			inParam2)=0;
-								
+
 };
 
 class	XPCWidget {
@@ -36,18 +36,18 @@ public:
 								XPWidgetID				inWidget,
 								bool					inOwnsWidget);
 	virtual				~XPCWidget();
-	
+
 			void		SetOwnsWidget(
 								bool 					inOwnsWidget);
 			void		SetOwnsChildren(
 								bool 					inOwnsChildren);
 
 			operator XPWidgetID () const;
-			
+
 			XPWidgetID	Get(void) const;
 
 			void		AddAttachment(
-								XPCWidgetAttachment * 	inAttachment, 
+								XPCWidgetAttachment * 	inAttachment,
 								bool 					inOwnsAttachment,
 								bool					inPrefilter);
 			void		RemoveAttachment(
@@ -58,7 +58,7 @@ public:
 								XPWidgetID				inWidget,
 								long					inParam1,
 								long					inParam2);
-		
+
 private:
 
 	static	int			WidgetCallback(
@@ -66,16 +66,16 @@ private:
 								XPWidgetID				inWidget,
 								long					inParam1,
 								long					inParam2);
-		
+
 	typedef	std::pair<XPCWidgetAttachment *, bool>	AttachmentInfo;
 	typedef	std::vector<AttachmentInfo>				AttachmentVector;
-		
+
 		AttachmentVector		mAttachments;
 		XPWidgetID				mWidget;
 		bool					mOwnsChildren;
 		bool					mOwnsWidget;
-	
-	XPCWidget();							
+
+	XPCWidget();
 	XPCWidget(const XPCWidget&);
 	XPCWidget& operator=(const XPCWidget&);
 

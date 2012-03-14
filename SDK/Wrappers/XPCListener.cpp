@@ -10,12 +10,12 @@ XPCListener::~XPCListener()
 	while (!mBroadcasters.empty())
 		mBroadcasters.front()->RemoveListener(this);
 }
-	
+
 void		XPCListener::BroadcasterAdded(
 							XPCBroadcaster *	inBroadcaster)
 {
 	mBroadcasters.push_back(inBroadcaster);
-}							
+}
 
 void		XPCListener::BroadcasterRemoved(
 							XPCBroadcaster *	inBroadcaster)
@@ -24,4 +24,4 @@ void		XPCListener::BroadcasterRemoved(
 		mBroadcasters.end(), inBroadcaster);
 	if (iter != mBroadcasters.end())
 		mBroadcasters.erase(iter);
-}							
+}

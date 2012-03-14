@@ -8,9 +8,9 @@ public:
 
 					XPCKeySniffer(int inBeforeWindows);
 	virtual			~XPCKeySniffer();
-	
+
 	virtual	int		HandleKeyStroke(
-							char 			inCharKey, 
+							char 			inCharKey,
 							XPLMKeyFlags	inFlags,
 							char			inVirtualKey)=0;
 
@@ -19,7 +19,7 @@ private:
 		int		mBeforeWindows;
 
 	static	int		KeySnifferCB(
-							char 			inCharKey, 
+							char 			inCharKey,
 							XPLMKeyFlags	inFlags,
 							char			inVirtualKey,
 							void * 			inRefCon);
@@ -42,7 +42,7 @@ public:
 	virtual	void	HandleKey(char inKey, XPLMKeyFlags inFlags, char inVirtualKey)=0;
 	virtual	void	LoseFocus(void)=0;
 	virtual	int		HandleClick(int x, int y, XPLMMouseStatus inMouse)=0;
-	
+
 			void	GetWindowGeometry(
 						int	*				outLeft,
 						int	*				outTop,
@@ -59,7 +59,7 @@ public:
 			void	TakeKeyboardFocus(void);
 			void	BringWindowToFront(void);
 			int		IsWindowInFront(void);
-		
+
 private:
 
 		XPLMWindowID	mWindow;

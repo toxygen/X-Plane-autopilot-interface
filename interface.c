@@ -4,19 +4,19 @@
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; version 2 of the License.
- *  
+ *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY except by those people which sell it, which
  *  are required to give you total support for your newly bought product;
  *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR
  *  A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- *        
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *  
+ *
  */
- 
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -45,23 +45,23 @@ void cleanup()
 }
 
 void MyDrawWindowCallback(
-			  XPLMWindowID inWindowID,    
-			  void *       inRefcon);    
+			  XPLMWindowID inWindowID,
+			  void *       inRefcon);
 
 void MyHandleKeyCallback(
-			 XPLMWindowID inWindowID,    
-			 char         inKey,    
-			 XPLMKeyFlags inFlags,    
-			 char         inVirtualKey,    
-			 void *       inRefcon,    
-			 int          losingFocus);    
+			 XPLMWindowID inWindowID,
+			 char         inKey,
+			 XPLMKeyFlags inFlags,
+			 char         inVirtualKey,
+			 void *       inRefcon,
+			 int          losingFocus);
 
 int MyHandleMouseClickCallback(
-			       XPLMWindowID    inWindowID,    
-			       int             x,    
-			       int             y,    
-			       XPLMMouseStatus inMouse,    
-			       void *          inRefcon);    
+			       XPLMWindowID    inWindowID,
+			       int             x,
+			       int             y,
+			       XPLMMouseStatus inMouse,
+			       void *          inRefcon);
 
 
 /*
@@ -92,7 +92,7 @@ PLUGIN_API int XPluginStart(
     }
 
   pthread_mutex_init(&lines_m, NULL);
-  
+
 
   /* Create Main Window */
   gWindow = XPLMCreateWindow(
@@ -150,7 +150,7 @@ PLUGIN_API void XPluginReceiveMessage(
  * MyDrawingWindowCallback
  */
 void MyDrawWindowCallback(
-			  XPLMWindowID inWindowID,    
+			  XPLMWindowID inWindowID,
 			  void *       inRefcon)
 {
   int left, top, right, bottom;
@@ -162,29 +162,29 @@ void MyDrawWindowCallback(
   XPLMDrawTranslucentDarkBox(left, top, right, bottom);
   redraw(inWindowID);
 
-}                                   
+}
 
 /*
- * MyHandleKeyCallback 
+ * MyHandleKeyCallback
  */
 void MyHandleKeyCallback(
-			 XPLMWindowID inWindowID,    
-			 char         inKey,    
-			 XPLMKeyFlags inFlags,    
-			 char         inVirtualKey,    
-			 void *       inRefcon,    
+			 XPLMWindowID inWindowID,
+			 char         inKey,
+			 XPLMKeyFlags inFlags,
+			 char         inVirtualKey,
+			 void *       inRefcon,
 			 int          losingFocus)
 {
-}                                   
+}
 
 /*
  * MyHandleMouseClickCallback
  */
 int MyHandleMouseClickCallback(
-			       XPLMWindowID    inWindowID,    
-			       int             x,    
-			       int             y,    
-			       XPLMMouseStatus inMouse,    
+			       XPLMWindowID    inWindowID,
+			       int             x,
+			       int             y,
+			       XPLMMouseStatus inMouse,
 			       void *          inRefcon)
 {
   /* toggle up and down mouse state */
@@ -195,4 +195,4 @@ int MyHandleMouseClickCallback(
   else
     printMsg("test2");
   return 1;
-}                                      
+}

@@ -4,5 +4,5 @@
 #define PLUGIN  "autopilot"
 
 #define LINECOUNT 9            /* number of lines in window */
-#define OFFSET    90 / LINECOUNT  
+#define OFFSET    90 / LINECOUNT
 

@@ -21,7 +21,7 @@ void		XPCBroadcaster::AddListener(
 {
 	mListeners.push_back(inListener);
 	inListener->BroadcasterAdded(this);
-}				
+}
 
 void		XPCBroadcaster::RemoveListener(
 				XPCListener *	inListener)
@@ -30,16 +30,16 @@ void		XPCBroadcaster::RemoveListener(
 		(mListeners.begin(), mListeners.end(), inListener);
 	if (iter == mListeners.end())
 		return;
-		
+
 	if (mIterator != NULL)
 	{
 		if (*mIterator >= iter)
 			(*mIterator)--;
 	}
-	
+
 	mListeners.erase(iter);
 	inListener->BroadcasterRemoved(this);
-}				
+}
 
 void		XPCBroadcaster::BroadcastMessage(
 				long		inMessage,
@@ -52,5 +52,5 @@ void		XPCBroadcaster::BroadcastMessage(
 		(*iter)->ListenToMessage(inMessage, inParam);
 	}
 	mIterator = NULL;
-}				
+}
 

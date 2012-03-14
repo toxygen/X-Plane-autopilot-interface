@@ -3,28 +3,28 @@
 
 /*
  * Copyright 2005 Sandy Barbour and Ben Supnik
- * 
+ *
  * All rights reserved.  See license.txt for usage.
- * 
- * X-Plane SDK Version: 1.0.2                                                  
+ *
+ * X-Plane SDK Version: 1.0.2
  *
  */
 
 /*
- * XPStandardWidgets - THEORY OF OPERATION 
- * 
- * The standard widgets are widgets built into the widgets library.  While you 
- * can gain access to the widget function that drives them, you generally use 
- * them by calling XPCreateWidget and then listening for special messages, 
- * etc. 
- * 
- * The standard widgets often send mesages to themselves when the user 
- * performs an event; these messages are sent up the widget hierarchy until 
- * they are handled.  So you can add a widget proc directly to a push button 
- * (for example) to intercept the message when it is clicked, or you can put 
- * one widget proc on a window for all of the push buttons in the window.  
- * Most of these messages contain the original widget ID as a parameter so you 
- * can know which widget is messaging no matter who it is sent to.             
+ * XPStandardWidgets - THEORY OF OPERATION
+ *
+ * The standard widgets are widgets built into the widgets library.  While you
+ * can gain access to the widget function that drives them, you generally use
+ * them by calling XPCreateWidget and then listening for special messages,
+ * etc.
+ *
+ * The standard widgets often send mesages to themselves when the user
+ * performs an event; these messages are sent up the widget hierarchy until
+ * they are handled.  So you can add a widget proc directly to a push button
+ * (for example) to intercept the message when it is clicked, or you can put
+ * one widget proc on a window for all of the push buttons in the window.
+ * Most of these messages contain the original widget ID as a parameter so you
+ * can know which widget is messaging no matter who it is sent to.
  *
  */
 
@@ -38,9 +38,9 @@ extern "C" {
  * MAIN WINDOW
  ***************************************************************************/
 /*
- * The main window widget class provides a "window" as the user knows it.  
- * These windows are dragable and can be selected.  Use them to create 
- * floating windows and non-modal dialogs.                                     
+ * The main window widget class provides a "window" as the user knows it.
+ * These windows are dragable and can be selected.  Use them to create
+ * floating windows and non-modal dialogs.
  *
  */
 
@@ -50,8 +50,8 @@ extern "C" {
 
 /*
  * Main Window Type Values
- * 
- * These type values are used to control the appearance of a main window.      
+ *
+ * These type values are used to control the appearance of a main window.
  *
  */
 enum {
@@ -66,7 +66,7 @@ enum {
 
 /*
  * Main Window Properties
- * 
+ *
  *
  */
 enum {
@@ -83,7 +83,7 @@ enum {
 
 /*
  * MainWindow Messages
- * 
+ *
  *
  */
 enum {
@@ -97,9 +97,9 @@ enum {
  * SUB WINDOW
  ***************************************************************************/
 /*
- * X-plane dialogs are divided into separate areas; the sub window widgets 
- * allow you to make these areas. Create one main window and place several 
- * subwindows inside it.  Then place your controls inside the subwindows.      
+ * X-plane dialogs are divided into separate areas; the sub window widgets
+ * allow you to make these areas. Create one main window and place several
+ * subwindows inside it.  Then place your controls inside the subwindows.
  *
  */
 
@@ -109,8 +109,8 @@ enum {
 
 /*
  * SubWindow Type Values
- * 
- * These values control the appearance of the subwindow.                       
+ *
+ * These values control the appearance of the subwindow.
  *
  */
 enum {
@@ -128,7 +128,7 @@ enum {
 
 /*
  * SubWindow Properties
- * 
+ *
  *
  */
 enum {
@@ -143,22 +143,22 @@ enum {
  * BUTTON
  ***************************************************************************/
 /*
- * The button class provides a number of different button styles and 
- * behaviors, including push buttons, radio buttons, check boxes, etc.  The 
- * button label appears on or next to the button depending on the button's 
- * appearance, or type.   
- * 
- * The button's behavior is a separate property that dictates who it hilights 
- * and what kinds of messages it sends.  Since behavior and type are 
- * different, you can do strange things like make check boxes that act as push 
- * buttons or push buttons with radio button behavior. 
- * 
- * In X-Plane 6 there were no check box graphics.  The result is the following 
- * behavior: in x-plane 6 all check box and radio buttons are round 
- * (radio-button style) buttons; in X-Plane 7 they are all square (check-box 
- * style) buttons.  In a future version of x-plane, the xpButtonBehavior enums 
- * will provide the correct graphic (check box or radio button) giving the 
- * expected result.                                                            
+ * The button class provides a number of different button styles and
+ * behaviors, including push buttons, radio buttons, check boxes, etc.  The
+ * button label appears on or next to the button depending on the button's
+ * appearance, or type.
+ *
+ * The button's behavior is a separate property that dictates who it hilights
+ * and what kinds of messages it sends.  Since behavior and type are
+ * different, you can do strange things like make check boxes that act as push
+ * buttons or push buttons with radio button behavior.
+ *
+ * In X-Plane 6 there were no check box graphics.  The result is the following
+ * behavior: in x-plane 6 all check box and radio buttons are round
+ * (radio-button style) buttons; in X-Plane 7 they are all square (check-box
+ * style) buttons.  In a future version of x-plane, the xpButtonBehavior enums
+ * will provide the correct graphic (check box or radio button) giving the
+ * expected result.
  *
  */
 
@@ -168,9 +168,9 @@ enum {
 
 /*
  * Button Types
- * 
- * These define the visual appearance of buttons but not how they respond to 
- * the mouse.                                                                  
+ *
+ * These define the visual appearance of buttons but not how they respond to
+ * the mouse.
  *
  */
 enum {
@@ -196,8 +196,8 @@ enum {
 
 /*
  * Button Behavior Values
- * 
- * These define how the button responds to mouse clicks.                       
+ *
+ * These define how the button responds to mouse clicks.
  *
  */
 enum {
@@ -221,7 +221,7 @@ enum {
 
 /*
  * Button Properties
- * 
+ *
  *
  */
 enum {
@@ -242,11 +242,11 @@ enum {
 
 /*
  * Button Messages
- * 
- * These messages are sent by the button to itself and then up the widget 
- * chain when the button is clicked.  (You may intercept them by providing a 
- * widget handler for the button itself or by providing a handler in a parent 
- * widget.)                                                                    
+ *
+ * These messages are sent by the button to itself and then up the widget
+ * chain when the button is clicked.  (You may intercept them by providing a
+ * widget handler for the button itself or by providing a handler in a parent
+ * widget.)
  *
  */
 enum {
@@ -270,21 +270,21 @@ enum {
  * TEXT FIELD
  ***************************************************************************/
 /*
- * The text field widget provides an editable text field including mouse 
- * selection and keyboard navigation.   The contents of the text field are its 
- * descriptor.  (The descriptor changes as the user types.) 
- * 
- * The text field can have a number of types, that effect the visual layout of 
- * the text field. The text field sends messages to itself so you may control 
- * its behavior. 
- * 
- * If you need to filter keystrokes, add a new handler and intercept the key 
- * press message.  Since key presses are passed by pointer, you can modify the 
- * keystroke and pass it through to the text field widget. 
- * 
- * WARNING: in x-plane before 7.10 (including 6.70) null characters could 
- * crash x-plane.  To prevent this, wrap this object with a filter function 
- * (more instructions can be found on the SDK website).                        
+ * The text field widget provides an editable text field including mouse
+ * selection and keyboard navigation.   The contents of the text field are its
+ * descriptor.  (The descriptor changes as the user types.)
+ *
+ * The text field can have a number of types, that effect the visual layout of
+ * the text field. The text field sends messages to itself so you may control
+ * its behavior.
+ *
+ * If you need to filter keystrokes, add a new handler and intercept the key
+ * press message.  Since key presses are passed by pointer, you can modify the
+ * keystroke and pass it through to the text field widget.
+ *
+ * WARNING: in x-plane before 7.10 (including 6.70) null characters could
+ * crash x-plane.  To prevent this, wrap this object with a filter function
+ * (more instructions can be found on the SDK website).
  *
  */
 
@@ -294,8 +294,8 @@ enum {
 
 /*
  * Text Field Type Values
- * 
- * These control the look of the text field.                                   
+ *
+ * These control the look of the text field.
  *
  */
 enum {
@@ -315,7 +315,7 @@ enum {
 
 /*
  * Text Field Properties
- * 
+ *
  *
  */
 enum {
@@ -357,7 +357,7 @@ enum {
 
 /*
  * Text Field Messages
- * 
+ *
  *
  */
 enum {
@@ -374,9 +374,9 @@ enum {
  * SCROLL BAR
  ***************************************************************************/
 /*
- * A standard scroll bar or slider control.  The scroll bar has a minimum, 
- * maximum and current value that is updated when the user drags it.  The 
- * scroll bar sends continuous messages as it is dragged.                      
+ * A standard scroll bar or slider control.  The scroll bar has a minimum,
+ * maximum and current value that is updated when the user drags it.  The
+ * scroll bar sends continuous messages as it is dragged.
  *
  */
 
@@ -386,8 +386,8 @@ enum {
 
 /*
  * Scroll Bar Type Values
- * 
- * This defines how the scroll bar looks.                                      
+ *
+ * This defines how the scroll bar looks.
  *
  */
 enum {
@@ -404,7 +404,7 @@ enum {
 
 /*
  * Scroll Bar Properties
- * 
+ *
  *
  */
 enum {
@@ -432,7 +432,7 @@ enum {
 
 /*
  * Scroll Bar Messages
- * 
+ *
  *
  */
 enum {
@@ -447,9 +447,9 @@ enum {
  * CAPTION
  ***************************************************************************/
 /*
- * A caption is a simple widget that shows its descriptor as a string, useful 
- * for labeling parts of a window.  It always shows its descriptor as its 
- * string and is otherwise transparent.                                        
+ * A caption is a simple widget that shows its descriptor as a string, useful
+ * for labeling parts of a window.  It always shows its descriptor as its
+ * string and is otherwise transparent.
  *
  */
 
@@ -459,7 +459,7 @@ enum {
 
 /*
  * Caption Properties
- * 
+ *
  *
  */
 enum {
@@ -474,8 +474,8 @@ enum {
  * GENERAL GRAPHICS
  ***************************************************************************/
 /*
- * The general graphics widget can show one of many icons available from 
- * x-plane.                                                                    
+ * The general graphics widget can show one of many icons available from
+ * x-plane.
  *
  */
 
@@ -485,8 +485,8 @@ enum {
 
 /*
  * General Graphics Types Values
- * 
- * These define the icon for the general graphics.                             
+ *
+ * These define the icon for the general graphics.
  *
  */
 enum {
@@ -533,7 +533,7 @@ enum {
 
 /*
  * General Graphics Properties
- * 
+ *
  *
  */
 enum {
@@ -547,7 +547,7 @@ enum {
  * PROGRESS INDICATOR
  ***************************************************************************/
 /*
- * This widget implements a progress indicator as seen when x-plane starts up. 
+ * This widget implements a progress indicator as seen when x-plane starts up.
  *
  */
 
@@ -557,7 +557,7 @@ enum {
 
 /*
  * Progress Indicator Properties
- * 
+ *
  *
  */
 enum {

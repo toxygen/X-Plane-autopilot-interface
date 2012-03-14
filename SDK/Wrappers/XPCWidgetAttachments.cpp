@@ -4,7 +4,7 @@
 
 static	void	XPCGetOrderedSubWidgets(
 							XPWidgetID						inWidget,
-							std::vector<XPWidgetID>&		outChildren);					
+							std::vector<XPWidgetID>&		outChildren);
 
 XPCKeyFilterAttachment::XPCKeyFilterAttachment(
 								const char *	inValidKeys,
@@ -12,8 +12,8 @@ XPCKeyFilterAttachment::XPCKeyFilterAttachment(
 	mInput(inValidKeys),
 	mOutput(outValidKeys)
 {
-}								
-								
+}
+
 XPCKeyFilterAttachment::~XPCKeyFilterAttachment()
 {
 }
@@ -37,7 +37,7 @@ int		XPCKeyFilterAttachment::HandleWidgetMessage(
 		}	// Let it live.
 	}
 	return 0;
-}								
+}
 
 
 XPCKeyMessageAttachment::XPCKeyMessageAttachment(
@@ -52,12 +52,12 @@ XPCKeyMessageAttachment::XPCKeyMessageAttachment(
 {
 	if (inListener != NULL)
 		this->AddListener(inListener);
-}	
+}
 
 XPCKeyMessageAttachment::~XPCKeyMessageAttachment()
 {
 }
-									
+
 int		XPCKeyMessageAttachment::HandleWidgetMessage(
 								XPCWidget *		inObject,
 								XPWidgetMessage	inMessage,
@@ -72,12 +72,12 @@ int		XPCKeyMessageAttachment::HandleWidgetMessage(
 			return 0;
 		if (!(KEY_FLAGS(inParam1) & xplm_DownFlag))
 			return 0;
-		
+
 		BroadcastMessage(mMsg, mParam);
 		return mConsume ? 1 : 0;
 	}
 	return 0;
-}								
+}
 
 XPCPushButtonMessageAttachment::XPCPushButtonMessageAttachment(
 									XPWidgetID		inWidget,
@@ -112,8 +112,8 @@ int		XPCPushButtonMessageAttachment::HandleWidgetMessage(
 		BroadcastMessage(mMsg, mParam);
 		return 1;
 	}
-	return 0;	
-}					
+	return 0;
+}
 
 XPCSliderMessageAttachment::XPCSliderMessageAttachment(
 									XPWidgetID		inWidget,
@@ -143,8 +143,8 @@ int		XPCSliderMessageAttachment::HandleWidgetMessage(
 		return 1;
 	}
 
-	return 0;	
-}									
+	return 0;
+}
 
 
 XPCCloseButtonMessageAttachment::XPCCloseButtonMessageAttachment(
@@ -175,8 +175,8 @@ int		XPCCloseButtonMessageAttachment::HandleWidgetMessage(
 		return 1;
 	}
 
-	return 0;	
-}									
+	return 0;
+}
 
 XPCTabGroupAttachment::XPCTabGroupAttachment()
 {
@@ -214,7 +214,7 @@ int		XPCTabGroupAttachment::HandleWidgetMessage(
 			if (index >= widgets.size())
 				index = 0;
 		}
-		
+
 		if (backwards)
 		{
 			for (n = index; n >= 0; --n)
@@ -228,7 +228,7 @@ int		XPCTabGroupAttachment::HandleWidgetMessage(
 				if (XPGetWidgetProperty(widgets[n], xpProperty_Enabled, NULL))
 				if (XPSetKeyboardFocus(widgets[n]) != NULL)
 					return 1;
-			}				
+			}
 		} else {
 			for (n = index; n < widgets.size(); ++n)
 			{
@@ -241,11 +241,11 @@ int		XPCTabGroupAttachment::HandleWidgetMessage(
 				if (XPGetWidgetProperty(widgets[n], xpProperty_Enabled, NULL))
 				if (XPSetKeyboardFocus(widgets[n]) != NULL)
 					return 1;
-			}				
+			}
 		}
-	} 
+	}
 	return 0;
-}								
+}
 
 
 
@@ -261,7 +261,7 @@ static	void	XPCGetOrderedSubWidgets(
 		outChildren.push_back(child);
 		std::vector<XPWidgetID>	grandChildren;
 		XPCGetOrderedSubWidgets(child, grandChildren);
-		
+
 		outChildren.insert(outChildren.end(), grandChildren.begin(), grandChildren.end());
 	}
-}							
+}

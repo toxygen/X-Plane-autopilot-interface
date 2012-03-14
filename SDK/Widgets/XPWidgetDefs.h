@@ -3,15 +3,15 @@
 
 /*
  * Copyright 2005 Sandy Barbour and Ben Supnik
- * 
+ *
  * All rights reserved.  See license.txt for usage.
- * 
- * X-Plane SDK Version: 1.0.2                                                  
+ *
+ * X-Plane SDK Version: 1.0.2
  *
  */
 
 /*
- *                                                                             
+ *
  *
  */
 
@@ -45,11 +45,11 @@ extern "C" {
 		#if __GNUC__ >= 4
 			#define WIDGET_API __attribute__((visibility("default")))
 		#else
-			#define WIDGET_API 
+			#define WIDGET_API
 		#endif
 	#else
-		#define WIDGET_API 
-	#endif	
+		#define WIDGET_API
+	#endif
 #else
 #pragma error "Platform not defined!"
 #endif
@@ -57,11 +57,11 @@ extern "C" {
  * WIDGET DEFINITIONS
  ***************************************************************************/
 /*
- * A widget is a call-back driven screen entity like a push-button, window, 
- * text entry field, etc.  
- * 
- * Use the widget API to create widgets of various classes.  You can nest them 
- * into trees of widgets to create complex user interfaces.                    
+ * A widget is a call-back driven screen entity like a push-button, window,
+ * text entry field, etc.
+ *
+ * Use the widget API to create widgets of various classes.  You can nest them
+ * into trees of widgets to create complex user interfaces.
  *
  */
 
@@ -69,27 +69,27 @@ extern "C" {
 
 /*
  * XPWidgetID
- * 
- * A Widget ID is an opaque unique non-zero handle identifying your widget.  
- * Use 0 to specify "no widget".  This type is defined as wide enough to hold 
- * a pointer.  You receive a widget ID when you create a new widget and then 
- * use that widget ID to further refer to the widget.                          
+ *
+ * A Widget ID is an opaque unique non-zero handle identifying your widget.
+ * Use 0 to specify "no widget".  This type is defined as wide enough to hold
+ * a pointer.  You receive a widget ID when you create a new widget and then
+ * use that widget ID to further refer to the widget.
  *
  */
 typedef void * XPWidgetID;
 
 /*
  * XPWidgetPropertyID
- * 
- * Properties are values attached to instances of your widgets.  A property is 
- * identified by a 32-bit ID and its value is also 32 bits.   
- * 
- * Each widget instance may have a property or not have it.  When you set a 
- * property on a widget for the first time, the property is added to the 
- * widget; it then stays there for the life of the widget. 
- * 
- * Some property IDs are predefined by the widget package; you can make up 
- * your own property IDs as well.                                              
+ *
+ * Properties are values attached to instances of your widgets.  A property is
+ * identified by a 32-bit ID and its value is also 32 bits.
+ *
+ * Each widget instance may have a property or not have it.  When you set a
+ * property on a widget for the first time, the property is added to the
+ * widget; it then stays there for the life of the widget.
+ *
+ * Some property IDs are predefined by the widget package; you can make up
+ * your own property IDs as well.
  *
  */
 enum {
@@ -130,9 +130,9 @@ typedef long XPWidgetPropertyID;
 
 /*
  * XPMouseState_t
- * 
- * When the mouse is clicked or dragged, a pointer to this structure is passed 
- * to your widget function.                                                    
+ *
+ * When the mouse is clicked or dragged, a pointer to this structure is passed
+ * to your widget function.
  *
  */
 typedef struct {
@@ -148,9 +148,9 @@ typedef struct {
 
 /*
  * XPKeyState_t
- * 
- * When a key is pressed, a pointer to this struct is passed to your widget 
- * function.                                                                   
+ *
+ * When a key is pressed, a pointer to this struct is passed to your widget
+ * function.
  *
  */
 typedef struct {
@@ -165,9 +165,9 @@ typedef struct {
 
 /*
  * XPWidgetGeometryChange_t
- * 
- * This structure contains the deltas for your widget's geometry when it 
- * changes.                                                                    
+ *
+ * This structure contains the deltas for your widget's geometry when it
+ * changes.
  *
  */
 typedef struct {
@@ -180,9 +180,9 @@ typedef struct {
 
 /*
  * XPDispatchMode
- * 
- * The dispatching modes describe how the widgets library sends out messages.  
- * Currently there are three modes:                                            
+ *
+ * The dispatching modes describe how the widgets library sends out messages.
+ * Currently there are three modes:
  *
  */
 enum {
@@ -212,10 +212,10 @@ typedef long XPDispatchMode;
 
 /*
  * XPWidgetClass
- * 
- * Widget classes define predefined widget types.  A widget class basically 
- * specifies from a library the widget function to be used for the widget.  
- * Most widgets can be made right from classes.                                
+ *
+ * Widget classes define predefined widget types.  A widget class basically
+ * specifies from a library the widget function to be used for the widget.
+ * Most widgets can be made right from classes.
  *
  */
 typedef long XPWidgetClass;
@@ -228,16 +228,16 @@ typedef long XPWidgetClass;
  * WIDGET MESSAGES
  ***************************************************************************/
 /*
- *                                                                             
+ *
  *
  */
 
 
 /*
  * XPWidgetMessage
- * 
- * Widgets receive 32-bit messages indicating what action is to be taken or  
- * notifications of events.  The list of messages may be expanded.             
+ *
+ * Widgets receive 32-bit messages indicating what action is to be taken or
+ * notifications of events.  The list of messages may be expanded.
  *
  */
 enum {
@@ -457,27 +457,27 @@ typedef long XPWidgetMessage;
  * WIDGET CALLBACK FUNCTION
  ***************************************************************************/
 /*
- *                                                                             
+ *
  *
  */
 
 
 /*
  * XPWidgetFunc_t
- * 
- * This function defines your custom widget's behavior.  It will be called by 
- * the widgets library to send messages to your widget.  The message and 
- * widget ID are passed in, as well as two 32-bit signed parameters whose 
- * meaning varies with the message.  Return 1 to indicate that you have 
- * processed the message, 0 to indicate that you have not.  For any message 
- * that is not understood, return 0.                                           
+ *
+ * This function defines your custom widget's behavior.  It will be called by
+ * the widgets library to send messages to your widget.  The message and
+ * widget ID are passed in, as well as two 32-bit signed parameters whose
+ * meaning varies with the message.  Return 1 to indicate that you have
+ * processed the message, 0 to indicate that you have not.  For any message
+ * that is not understood, return 0.
  *
  */
 typedef int (* XPWidgetFunc_t)(
-                                   XPWidgetMessage      inMessage,    
-                                   XPWidgetID           inWidget,    
-                                   long                 inParam1,    
-                                   long                 inParam2);    
+                                   XPWidgetMessage      inMessage,
+                                   XPWidgetID           inWidget,
+                                   long                 inParam1,
+                                   long                 inParam2);
 
 #ifdef __cplusplus
 }
