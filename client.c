@@ -26,6 +26,10 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <pwd.h>
+#include <pthread.h>
+
+pthread_t       thread;
+pthread_mutex_t console_m;
 
 /*
  * user_home()
@@ -34,11 +38,46 @@
  */
 char * user_home()
 {
-  struct passwd * pw;
-  uid_t uid;
-  uid = getuid();
-  pw  = getpwuid(uid);
-  return pw->pw_dir;
+    struct passwd * pw;
+    uid_t uid;
+    uid = getuid();
+    pw  = getpwuid(uid);
+    return pw->pw_dir;
+}
+
+
+/*
+ * listen(s)
+ *
+ * prints received data from socket s
+ *
+ */
+void * listen_console(void * s)
+{
+    int stat;
+    char str[100];
+    int sock;
+    sock = *((int*) s);
+    while(1)
+    {
+        stat = recvfrom(sock, str, 100, 0, NULL, NULL);
+        if (stat < 1)
+        {
+            pthread_mutex_lock(&console_m);
+            printf("value je %d\n", stat);
+            perror("recvfrom -1");
+            pthread_mutex_unlock(&console_m);
+            exit(1);
+        }
+        else
+        {
+            pthread_mutex_lock(&console_m);
+            printf("prijate: %s\n", str);
+            fflush(stdout);
+            pthread_mutex_unlock(&console_m);
+        }
+    }
+
 }
 
 
@@ -49,50 +88,57 @@ char * user_home()
  */
 int main()
 {
-  int s, len;
-  struct sockaddr_un remote;
-  char str[100];
-  char path[109];
-
-  strcpy(path, user_home());
-  strncat(path, "/ap.socket", 108 - strlen(path));
-
-  if((s = socket(PF_LOCAL, SOCK_STREAM, 0)) == -1)
+    int s, len, rc;
+    struct sockaddr_un remote;
+    char str[100];
+    char path[109];
+    
+    pthread_attr_t attr;
+    pthread_attr_init(&attr);
+    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+    
+    strcpy(path, user_home());
+    strncat(path, "/ap.socket", 108 - strlen(path));
+    
+    if((s = socket(PF_LOCAL, SOCK_STREAM, 0)) == -1)
     {
-      perror("socket");
-      exit(1);
+        perror("socket");
+        exit(1);
     }
-
-  printf("Trying to connect...\n");
-
-  remote.sun_family = AF_UNIX;
-  strcpy(remote.sun_path, path);
-  len = strlen(remote.sun_path) + sizeof(remote.sun_family) + 1;
-  if(connect(s, (struct sockaddr *) &remote, len) == -1)
+    
+    printf("Trying to connect...\n");
+    
+    remote.sun_family = AF_UNIX;
+    strcpy(remote.sun_path, path);
+    len = strlen(remote.sun_path) + sizeof(remote.sun_family) + 1;
+    if(connect(s, (struct sockaddr *) &remote, len) == -1)
     {
-      perror("connect");
-      exit(1);
+        perror("connect");
+        exit(1);
     }
-
-  printf("Connected.\n");
-  int h = 5;
-  while(h--)
+    pthread_mutex_init(&console_m, NULL);
+    rc = pthread_create(&thread, NULL, listen_console, (void *) &s);
+    pthread_attr_destroy(&attr);
+    
+    printf("Connected.\n");
+    while(1)
     {
-      strcpy(str, "aoeu\n");
-      printf("sending %s", str);
-      if(send(s, str, strlen(str) + 1, 0) == -1)
-	{
-	  perror("send");
-	  exit(1);
-	}
-      if(recvfrom(s, str, 100, 0, NULL, NULL))
-	{
-	  printf("prijate: %s", str);
-	}
-      sleep(2);
+        scanf("%s", str);
+        strcat(str, "\n");
+        pthread_mutex_lock(&console_m);
+        printf("sending %s", str);
+        pthread_mutex_unlock(&console_m);
+        if(send(s, str, strlen(str) + 1, 0) < 1)
+        {  
+            pthread_mutex_lock(&console_m);
+            perror("send");
+            pthread_mutex_unlock(&console_m);
+            exit(1);
+        }
     }
-
-  close(s);
-
-  return 0;
+    pthread_cancel(thread);
+    pthread_mutex_destroy(&console_m);
+    close(s);
+    
+    return 0;
 }

@@ -24,6 +24,7 @@
 #include <unistd.h>
 #include "XPLMDisplay.h"
 #include "XPLMGraphics.h"
+#include "XPLMDataAccess.h"
 #include "ui.h"
 #include "settings.h"
 #include "server.h"
@@ -34,80 +35,96 @@ int          gClicked = 0;
 pthread_t    thread;
 pthread_mutex_t lines_m;
 
+XPLMDataRef  indicated_airspeed2;   /* float */
+XPLMDataRef  phi;                   /* float */
+XPLMDataRef  theta;                 /* float */
+XPLMDataRef  elevation;             /* double */
+
+
 void cleanup()
 {
-  for(int i = 0; i < LINECOUNT; i++)
+    for(int i = 0; i < LINECOUNT; i++)
     {
-      free(lines[i]);
+        free(lines[i]);
     }
-  free(lines);
-  sock_cleanup();
+    free(lines);
+    sock_cleanup();
 }
 
-void MyDrawWindowCallback(
-			  XPLMWindowID inWindowID,
-			  void *       inRefcon);
+void MyDrawWindowCallback(XPLMWindowID inWindowID,
+                          void *       inRefcon);
 
-void MyHandleKeyCallback(
-			 XPLMWindowID inWindowID,
-			 char         inKey,
-			 XPLMKeyFlags inFlags,
-			 char         inVirtualKey,
-			 void *       inRefcon,
-			 int          losingFocus);
+void MyHandleKeyCallback(XPLMWindowID inWindowID,
+                         char         inKey,
+                         XPLMKeyFlags inFlags,
+                         char         inVirtualKey,
+                         void *       inRefcon,
+                         int          losingFocus);
 
-int MyHandleMouseClickCallback(
-			       XPLMWindowID    inWindowID,
-			       int             x,
-			       int             y,
-			       XPLMMouseStatus inMouse,
-			       void *          inRefcon);
+int MyHandleMouseClickCallback(XPLMWindowID    inWindowID,
+                               int             x,
+                               int             y,
+                               XPLMMouseStatus inMouse,
+                               void *          inRefcon);
 
 
 /*
  * XPluginStart
  */
 PLUGIN_API int XPluginStart(
-			    char * outName,
-			    char * outSig,
-			    char * outDesc)
+                            char * outName,
+                            char * outSig,
+                            char * outDesc)
 {
-  int rc;
-  pthread_attr_t attr;
-  pthread_attr_init(&attr);
-  pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-
-
-  /* Inform X-Plane about plugin */
-  strcpy(outName, "AP Interface " VERSION);
-  strcpy(outSig, COMPANY "." PACKAGE "." PLUGIN);
-  strcpy(outDesc, "Interface for autopilot");
-
-  /* Create buffer for console */
-  lines = (char **) malloc (sizeof(char *) * LINECOUNT);
-
-  for(int i = 0; i < LINECOUNT; i++)
+    int rc;
+    pthread_attr_t attr;
+    pthread_attr_init(&attr);
+    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+    
+    
+    /* Inform X-Plane about the plugin */
+    strcpy(outName, "AP Interface " VERSION);
+    strcpy(outSig, COMPANY "." PACKAGE "." PLUGIN);
+    strcpy(outDesc, "Interface for autopilot");
+    
+    /* Create buffer for console */
+    lines = (char **) malloc (sizeof(char *) * LINECOUNT);
+    
+    for(int i = 0; i < LINECOUNT; i++)
     {
-      lines[i] = (char *) calloc (256, sizeof(char));
+        lines[i] = (char *) calloc (256, sizeof(char));
     }
-
-  pthread_mutex_init(&lines_m, NULL);
-
-
-  /* Create Main Window */
-  gWindow = XPLMCreateWindow(
-			     50,  /* left    */
-			     900, /* top     */
-			     300, /* right   */
-			     800, /* bottom  */
-			     1,   /* visible */
-			     MyDrawWindowCallback,       /* draw callback */
-			     MyHandleKeyCallback,        /* key handling callback */
-			     MyHandleMouseClickCallback, /* mouseclick handling callback */
-			     NULL);
-  rc = pthread_create(&thread, NULL, server, NULL);
-  pthread_attr_destroy(&attr);
-  return 1;
+    
+    pthread_mutex_init(&lines_m, NULL);
+    
+    
+    /* Create Main Window */
+    gWindow = XPLMCreateWindow(
+                               50,  /* left    */
+                               900, /* top     */
+                               300, /* right   */
+                               800, /* bottom  */
+                               1,   /* visible */
+                               MyDrawWindowCallback,       /* draw callback */
+                               MyHandleKeyCallback,        /* key handling callback */
+                               MyHandleMouseClickCallback, /* mouseclick handling callback */
+                               NULL);
+    
+    indicated_airspeed2 = XPLMFindDataRef("sim/flightmodel/position/indicated_airspeed2");
+    if(indicated_airspeed2 != NULL) printMsg("Indicated Airspeed 2 initialized");
+    
+    phi = XPLMFindDataRef("sim/flightmodel/position/phi");
+    if(phi != NULL) printMsg("Roll initialized");
+    
+    theta = XPLMFindDataRef("sim/flightmodel/position/theta");
+    if(theta != NULL) printMsg("Pitch initialized");
+    
+    elevation = XPLMFindDataRef("sim/flightmodel/position/elevation");
+    if(elevation != NULL) printMsg("Elevation initialized");
+    
+    rc = pthread_create(&thread, NULL, server, NULL);
+    pthread_attr_destroy(&attr);
+    return 1;
 }
 
 /*
@@ -115,8 +132,8 @@ PLUGIN_API int XPluginStart(
  */
 PLUGIN_API void	XPluginStop(void)
 {
-  XPLMDestroyWindow(gWindow);
-  cleanup();
+    XPLMDestroyWindow(gWindow);
+    cleanup();
 }
 
 /*
@@ -124,8 +141,8 @@ PLUGIN_API void	XPluginStop(void)
  */
 PLUGIN_API void XPluginDisable(void)
 {
-  pthread_cancel(thread);
-  pthread_mutex_destroy(&lines_m);
+    pthread_cancel(thread);
+    pthread_mutex_destroy(&lines_m);
 }
 
 /*
@@ -133,16 +150,16 @@ PLUGIN_API void XPluginDisable(void)
  */
 PLUGIN_API int XPluginEnable(void)
 {
-  return 1;
+    return 1;
 }
 
 /*
  * XPluginReceiveMessage
  */
 PLUGIN_API void XPluginReceiveMessage(
-				      XPLMPluginID inFromWho,
-				      long	   inMessage,
-				      void *	   inParam)
+                                      XPLMPluginID inFromWho,
+                                      long	   inMessage,
+                                      void *	   inParam)
 {
 }
 
@@ -150,30 +167,49 @@ PLUGIN_API void XPluginReceiveMessage(
  * MyDrawingWindowCallback
  */
 void MyDrawWindowCallback(
-			  XPLMWindowID inWindowID,
-			  void *       inRefcon)
+                          XPLMWindowID inWindowID,
+                          void *       inRefcon)
 {
-  int left, top, right, bottom;
-
-  /* get the size of window */
-  XPLMGetWindowGeometry(inWindowID, &left, &top, &right, &bottom);
-
-  /* draw dark shade in window */
-  XPLMDrawTranslucentDarkBox(left, top, right, bottom);
-  redraw(inWindowID);
-
+    int left, top, right, bottom;
+    char speed_IAS[80];
+    char altitude[80];
+    char AOA[80];
+    char roll[80];
+    
+    /* get the size of window */
+    XPLMGetWindowGeometry(inWindowID, &left, &top, &right, &bottom);
+    
+    /* draw dark shade in window */
+    XPLMDrawTranslucentDarkBox(left, top, right, bottom);
+    
+    sprintf(speed_IAS, "%f", XPLMGetDataf(indicated_airspeed2));
+    sprintf(altitude, "%f", XPLMGetDataf(elevation));
+    sprintf(AOA, "%f", XPLMGetDataf(theta));    
+    sprintf(roll, "%f", XPLMGetDataf(phi));
+    
+    strcat(speed_IAS, " ias");
+    strcat(altitude, " altitude");
+    strcat(AOA, " AOA");
+    strcat(roll, " roll");
+    
+    send_msg(s2, speed_IAS);
+    send_msg(s2, altitude);
+    send_msg(s2, AOA);
+    send_msg(s2, roll);
+    redraw(inWindowID);
+    
 }
 
 /*
  * MyHandleKeyCallback
  */
 void MyHandleKeyCallback(
-			 XPLMWindowID inWindowID,
-			 char         inKey,
-			 XPLMKeyFlags inFlags,
-			 char         inVirtualKey,
-			 void *       inRefcon,
-			 int          losingFocus)
+                         XPLMWindowID inWindowID,
+                         char         inKey,
+                         XPLMKeyFlags inFlags,
+                         char         inVirtualKey,
+                         void *       inRefcon,
+                         int          losingFocus)
 {
 }
 
@@ -181,18 +217,18 @@ void MyHandleKeyCallback(
  * MyHandleMouseClickCallback
  */
 int MyHandleMouseClickCallback(
-			       XPLMWindowID    inWindowID,
-			       int             x,
-			       int             y,
-			       XPLMMouseStatus inMouse,
-			       void *          inRefcon)
+                               XPLMWindowID    inWindowID,
+                               int             x,
+                               int             y,
+                               XPLMMouseStatus inMouse,
+                               void *          inRefcon)
 {
-  /* toggle up and down mouse state */
-  if ((inMouse == xplm_MouseDown) || (inMouse == xplm_MouseUp))
-    gClicked = 1 - gClicked;
-  if(gClicked)
-    printMsg("test1");
-  else
-    printMsg("test2");
-  return 1;
+    /* toggle up and down mouse state */
+    if ((inMouse == xplm_MouseDown) || (inMouse == xplm_MouseUp))
+        gClicked = 1 - gClicked;
+    if(gClicked)
+        printMsg("test1");
+    else
+        printMsg("test2");
+    return 1;
 }

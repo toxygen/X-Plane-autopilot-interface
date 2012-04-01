@@ -31,7 +31,9 @@
 #include "XPLMGraphics.h"
 #include "ui.h"
 
-int s1, s2, len;
+int s1, s2;
+int len;
+
 struct sockaddr_un local, remote;
 
 /*
@@ -41,11 +43,11 @@ struct sockaddr_un local, remote;
  */
 char * user_home()
 {
-  struct passwd * pw;
-  uid_t uid;
-  uid = getuid();
-  pw  = getpwuid(uid);
-  return pw->pw_dir;
+    struct passwd * pw;
+    uid_t uid;
+    uid = getuid();
+    pw  = getpwuid(uid);
+    return pw->pw_dir;
 }
 
 /*
@@ -55,9 +57,19 @@ char * user_home()
  */
 void sock_cleanup()
 {
-  close(s2);
-  close(s1);
-  unlink(local.sun_path);
+    close(s2);
+    close(s1);
+    unlink(local.sun_path);
+}
+
+/*
+ * send_msg(string)
+ * 
+ * send string to client (so far limited to 100 chars)
+ */
+void send_msg(int socket, char * s)
+{
+    send(socket, s, 100, 0);
 }
 
 /*
@@ -68,70 +80,70 @@ void sock_cleanup()
 
 void * server()
 {
-  socklen_t t;
-  char str[100];
-  char msg[100];
-  char path[109];
-
-  strcpy(path, user_home());
-  strncat(path, "/ap.socket", 108 - strlen(path));
-
-  printMsg("server: Started socket server\n");
-  printMsg(path);
-  if((s1 = socket(PF_LOCAL, SOCK_STREAM, 0)) == -1)
+    socklen_t t;
+    char str[100];
+    char msg[100];
+    char path[109];
+    
+    strcpy(path, user_home());
+    strncat(path, "/ap.socket", 108 - strlen(path));
+    
+    printMsg("server: Started socket server\n");
+    printMsg(path);
+    if((s1 = socket(PF_LOCAL, SOCK_STREAM, 0)) == -1)
     {
-      printMsg("socket error");
-      pthread_exit(NULL);
+        printMsg("socket error");
+        pthread_exit(NULL);
     }
-  local.sun_family = PF_LOCAL;
-  strcpy(local.sun_path, path);
-  unlink(local.sun_path);
-  len = strlen(local.sun_path) + sizeof(local.sun_family) + 1;
-  if(bind(s1, (struct sockaddr *) &local, len) == -1)
+    local.sun_family = PF_LOCAL;
+    strcpy(local.sun_path, path);
+    unlink(local.sun_path);
+    len = strlen(local.sun_path) + sizeof(local.sun_family) + 1;
+    if(bind(s1, (struct sockaddr *) &local, len) == -1)
     {
-      printMsg("bind");
-      pthread_exit(NULL);
+        printMsg("bind");
+        pthread_exit(NULL);
     }
-
-  if (listen(s1, 5) == -1)
+    
+    if (listen(s1, 5) == -1)
     {
-      printMsg("listen");
-      pthread_exit(NULL);
+        printMsg("listen");
+        pthread_exit(NULL);
     }
-
-  while(1)
+    
+    while(1)
     {
-      int done, n;
-      printMsg("server: Waiting for a connection...\n");
-      t = sizeof(remote);
-      if((s2 = accept(s1, (struct sockaddr *) &remote, &t)) == -1)
-	{
-	  printMsg("accept");
-	  pthread_exit(NULL);
-	}
-      printMsg("server: Client connected.\n");
-
-      done = 0;
-      while(1)
-	{
-	  n = recvfrom(s2, str, 100, 0, NULL, NULL);
-	  if(n < 0)
-	    {
-	      if(n < 0) printMsg("recv");
-	      break;
-	    }
-	  if(n == 0)
-	    {
-	      printMsg("server: client disconnected.\n");
-	      break;
-	    }
-	  else
-	    {
-	      strcpy(msg, "client: ");
-	      strcat(msg, str);
-	      printMsg(msg);
-	      send(s2, str, 100, 0);
-	    }
-	}
+        int done, n;
+        printMsg("server: Waiting for a connection...\n");
+        t = sizeof(remote);
+        if((s2 = accept(s1, (struct sockaddr *) &remote, &t)) == -1)
+        {
+            printMsg("accept");
+            pthread_exit(NULL);
+        }
+        printMsg("server: Client connected.\n");
+        
+        done = 0;
+        while(1)
+        {
+            n = recvfrom(s2, str, 100, 0, NULL, NULL);
+            if(n < 0)
+            {
+                if(n < 0) printMsg("recv");
+                break;
+            }
+            if(n == 0)
+            {
+                printMsg("server: client disconnected.\n");
+                break;
+            }
+            else
+            {
+                strcpy(msg, "client: ");
+                strcat(msg, str);
+                printMsg(msg);
+                send_msg(s2, str);
+            }
+        }
     }
 }

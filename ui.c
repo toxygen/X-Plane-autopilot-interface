@@ -23,32 +23,29 @@
 #include "XPLMDisplay.h"
 #include "XPLMGraphics.h"
 #include "settings.h"
+#include "server.h"
 
 extern char ** lines;
 extern pthread_mutex_t lines_m;
 
-void redraw(
-	       XPLMWindowID inWindowID
-	    )
+void redraw(XPLMWindowID inWindowID)
 {
-  pthread_mutex_lock(&lines_m);
-  int space = 13;
-  int left, top, right, bottom;
-  float	color[] = { 1.0, 1.0, 1.0 }; 	/* RGB White */
-
-  XPLMGetWindowGeometry(inWindowID, &left, &top, &right, &bottom);
-
+    pthread_mutex_lock(&lines_m);
+    int space = 13;
+    int left, top, right, bottom;
+    float	color[] = { 1.0, 1.0, 1.0 }; 	/* RGB White */
+    XPLMGetWindowGeometry(inWindowID, &left, &top, &right, &bottom);
+    
     for(int i = 0; i < LINECOUNT; i++)
-      {
-	XPLMDrawString(
-		       color,
-		       left + 5,
-		       top - space,
-		       lines[i],
-		       NULL, /* no word-wrap */
-		       xplmFont_Basic);
-	space += OFFSET;
-      }
+    {
+        XPLMDrawString(color,
+                       left + 5,
+                       top - space,
+                       lines[i],
+                       NULL, /* no word-wrap */
+                       xplmFont_Basic);
+        space += OFFSET;
+    }
     pthread_mutex_unlock(&lines_m);
 }
 
@@ -56,25 +53,23 @@ void redraw(
 /* Function for printing to the log */
 /* TODO */
 /* create separate thread for processing printMsg */
-void printMsg(
-	      char * text
-	      )
+void printMsg(char * text)
 {
-  pthread_mutex_lock(&lines_m);
-  static int counter = 0;
-
-  if(counter == LINECOUNT - 1)
+    pthread_mutex_lock(&lines_m);
+    static int counter = 0;
+    
+    if(counter == LINECOUNT - 1)
     {
-      for(int i = 1; i < LINECOUNT; i++)
-	{
-	  strcpy(lines[i-1], lines[i]);
-	}
+        for(int i = 1; i < LINECOUNT; i++)
+        {
+            strcpy(lines[i-1], lines[i]);
+        }
     }
-  strcpy(lines[counter], text);
-
-  if(counter < (LINECOUNT - 1))
+    strcpy(lines[counter], text);
+    
+    if(counter < (LINECOUNT - 1))
     {
-      counter++;
+        counter++;
     }
-  pthread_mutex_unlock(&lines_m);
+    pthread_mutex_unlock(&lines_m);
 }
