@@ -4,6 +4,7 @@ X-Plane Autopilot Interface
 
 o Currently supports only Mac OS X (POSIX compliance will follow soon)
 o Tested only with X-Plane 9.x, but should work with v8 too
+o Provides optional HTML5 + Ajax gui (so far only monitoring)
 
 -- Notes --
 
@@ -14,3 +15,5 @@ o 2.0.1 X-Plane SDK in SDK/ dir, feel free to customize
 
  1) type make
  2) copy interface.xpl to Resources/plugins directory in X-Plane install dir
+ 3) optional: copy web/ directory to ~/Sites/ then have php enabled in apache and start apache
+ (in this case fix paths in code, it's todo to make it dynamic)
