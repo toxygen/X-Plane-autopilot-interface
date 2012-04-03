@@ -36,10 +36,14 @@ pthread_t    thread;
 pthread_mutex_t lines_m;
 
 XPLMDataRef  indicated_airspeed2;   /* float */
+XPLMDataRef  alpha;                 /* float */
+XPLMDataRef  magpsi;                /* float */
 XPLMDataRef  phi;                   /* float */
 XPLMDataRef  theta;                 /* float */
 XPLMDataRef  elevation;             /* double */
-
+XPLMDataRef  throttle_ref;          /* float */
+XPLMDataRef  paused;                /* int */
+XPLMDataRef  engine_count;          /* int */
 
 void cleanup()
 {
@@ -112,15 +116,28 @@ PLUGIN_API int XPluginStart(
     
     indicated_airspeed2 = XPLMFindDataRef("sim/flightmodel/position/indicated_airspeed2");
     if(indicated_airspeed2 != NULL) printMsg("Indicated Airspeed 2 initialized");
-    
+
+    alpha = XPLMFindDataRef("sim/flightmodel/position/alpha");
+    if(alpha != NULL) printMsg("AOA initialized");
+
     phi = XPLMFindDataRef("sim/flightmodel/position/phi");
     if(phi != NULL) printMsg("Roll initialized");
+    
+    magpsi = XPLMFindDataRef("sim/flightmodel/position/magpsi");
+    if(magpsi != NULL) printMsg("Magnetometer initialized");
+
     
     theta = XPLMFindDataRef("sim/flightmodel/position/theta");
     if(theta != NULL) printMsg("Pitch initialized");
     
     elevation = XPLMFindDataRef("sim/flightmodel/position/elevation");
     if(elevation != NULL) printMsg("Elevation initialized");
+
+    throttle_ref = XPLMFindDataRef("sim/flightmodel/engine/ENGN_thro");
+    if(throttle_ref != NULL) printMsg("Throttle initialized");
+    
+    paused = XPLMFindDataRef("sim/time/paused");
+    engine_count = XPLMFindDataRef("sim/aircraft/engine/acf_num_engines");
     
     rc = pthread_create(&thread, NULL, server, NULL);
     pthread_attr_destroy(&attr);
@@ -171,31 +188,41 @@ void MyDrawWindowCallback(
                           void *       inRefcon)
 {
     int left, top, right, bottom;
-    char speed_IAS[80];
-    char altitude[80];
-    char AOA[80];
-    char roll[80];
+    char speed_IAS[100];
+    char altitude[100];
+    char AOA[100];
+    char roll[100]; 
+    char pause[100];
+    char heading[100];
+    char thrust[100];
+    int  char_count = 0;
+    
+    float throttle[8];
+    
+    XPLMGetDatavf(throttle_ref, throttle, 0, 8);
     
     /* get the size of window */
     XPLMGetWindowGeometry(inWindowID, &left, &top, &right, &bottom);
     
     /* draw dark shade in window */
     XPLMDrawTranslucentDarkBox(left, top, right, bottom);
+
+    char_count += sprintf(speed_IAS,  "%.2f", XPLMGetDataf(indicated_airspeed2));
+    char_count += sprintf(altitude,  ",%.2f", XPLMGetDatad(elevation));
+    char_count += sprintf(AOA,       ",%.2f", XPLMGetDataf(alpha));    
+    char_count += sprintf(roll,      ",%.2f", XPLMGetDataf(phi));
+    char_count += sprintf(pause,     ",%.2d", XPLMGetDatai(paused));
+    char_count += sprintf(heading,   ",%.2f", XPLMGetDataf(magpsi));
+    char_count += sprintf(thrust,    ",%.2f", throttle[0]);
     
-    sprintf(speed_IAS, "%f", XPLMGetDataf(indicated_airspeed2));
-    sprintf(altitude, "%f", XPLMGetDataf(elevation));
-    sprintf(AOA, "%f", XPLMGetDataf(theta));    
-    sprintf(roll, "%f", XPLMGetDataf(phi));
+    strcat(speed_IAS, altitude);
+    strcat(speed_IAS, AOA);
+    strcat(speed_IAS, roll);
+    strcat(speed_IAS, pause);
+    strcat(speed_IAS, heading);
+    strcat(speed_IAS, thrust);
     
-    strcat(speed_IAS, " ias");
-    strcat(altitude, " altitude");
-    strcat(AOA, " AOA");
-    strcat(roll, " roll");
-    
-    send_msg(s2, speed_IAS);
-    send_msg(s2, altitude);
-    send_msg(s2, AOA);
-    send_msg(s2, roll);
+    send_nmsg(s2, speed_IAS, char_count);
     redraw(inWindowID);
     
 }

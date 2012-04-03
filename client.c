@@ -54,15 +54,18 @@ char * user_home()
  */
 void * listen_console(void * s)
 {
+    FILE * fp;
+    fp = fopen("/Users/toxygen/Sites/uav/roll.out","w+");
     int stat;
-    char str[100];
+    char str_in[100];
     int sock;
     sock = *((int*) s);
     while(1)
     {
-        stat = recvfrom(sock, str, 100, 0, NULL, NULL);
+        stat = recvfrom(sock, str_in, 100, 0, NULL, NULL);
         if (stat < 1)
         {
+            fclose(fp);
             pthread_mutex_lock(&console_m);
             printf("value je %d\n", stat);
             perror("recvfrom -1");
@@ -72,8 +75,12 @@ void * listen_console(void * s)
         else
         {
             pthread_mutex_lock(&console_m);
-            printf("prijate: %s\n", str);
+            printf("prijate: %s\n", str_in);
+            printf("pocet: %d\n", stat);
             fflush(stdout);
+            fseek(fp, 0, SEEK_SET);
+            fwrite(str_in, sizeof(char), stat, fp);
+            fflush(fp);
             pthread_mutex_unlock(&console_m);
         }
     }

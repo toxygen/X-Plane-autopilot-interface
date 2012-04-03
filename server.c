@@ -72,6 +72,11 @@ void send_msg(int socket, char * s)
     send(socket, s, 100, 0);
 }
 
+void send_nmsg(int socket, char * s, int n)
+{
+    send(socket, s, n, 0);
+}
+
 /*
  * server()
  *
