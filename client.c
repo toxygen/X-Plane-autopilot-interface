@@ -35,6 +35,7 @@ pthread_mutex_t console_m;
  * user_home()
  *
  * return home of current user
+ *
  */
 char * user_home()
 {
@@ -47,7 +48,7 @@ char * user_home()
 
 
 /*
- * listen(s)
+ * listen(socket)
  *
  * prints received data from socket s
  *
@@ -91,7 +92,6 @@ void * listen_console(void * s)
 /*
  * main()
  *
- * return home of current user
  */
 int main()
 {
