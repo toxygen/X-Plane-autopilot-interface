@@ -75,7 +75,7 @@
             'chart.shadow.blur':           3,
             'chart.shadow.offsetx':        3,
             'chart.shadow.offsety':        3,
-            'chart.key':                    null,
+            'chart.key':                    [],
             'chart.key.background':         'white',
             'chart.key.position':           'graph',
             'chart.key.halign':             'right',

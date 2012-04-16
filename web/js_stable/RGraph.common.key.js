@@ -34,7 +34,7 @@
         */
         var keypos   = obj.Get('chart.key.position');
         var textsize = obj.Get('chart.text.size');
-
+        
         /**
         * Change the older chart.key.vpos to chart.key.position.y
         */

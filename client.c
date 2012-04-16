@@ -28,7 +28,11 @@
 #include <pwd.h>
 #include <pthread.h>
 
-pthread_t       thread;
+#define DATA_OUT "/Users/toxygen/Sites/uav2/data.out"
+#define DATA_IN  "/Users/toxygen/Sites/uav2/data.in"
+
+
+pthread_t       threads[3];
 pthread_mutex_t console_m;
 
 /*
@@ -47,6 +51,31 @@ char * user_home()
 }
 
 
+void * read_datain()
+{
+    FILE * fp;
+    char str_new[100];
+    char str_old[100];
+    while(1)
+    {
+        fp = fopen(DATA_IN, "r");
+        fgets(str_new, 100, fp);
+        fclose(fp);
+        pthread_mutex_lock(&console_m);
+//        printf("precitane %s\n", str_new);
+        pthread_mutex_unlock(&console_m);
+        if(strcmp(str_new, str_old) != 0)
+        {
+            strcpy(str_old, str_new);
+            pthread_mutex_lock(&console_m);
+            printf("autopilot %s\n", str_old);
+            pthread_mutex_unlock(&console_m);
+            
+        }
+        usleep(500000);
+    }
+}
+
 /*
  * listen(socket)
  *
@@ -56,7 +85,7 @@ char * user_home()
 void * listen_console(void * s)
 {
     FILE * fp;
-    fp = fopen("/Users/toxygen/Sites/uav/roll.out","w+");
+    fp = fopen(DATA_OUT,"w+");
     int stat;
     char str_in[100];
     int sock;
@@ -67,18 +96,22 @@ void * listen_console(void * s)
         if (stat < 1)
         {
             fclose(fp);
+#ifdef DEBUG
             pthread_mutex_lock(&console_m);
             printf("value je %d\n", stat);
             perror("recvfrom -1");
             pthread_mutex_unlock(&console_m);
+#endif
             exit(1);
         }
         else
         {
+#ifdef DEBUG
             pthread_mutex_lock(&console_m);
             printf("prijate: %s\n", str_in);
             printf("pocet: %d\n", stat);
             fflush(stdout);
+#endif
             fseek(fp, 0, SEEK_SET);
             fwrite(str_in, sizeof(char), stat, fp);
             fflush(fp);
@@ -123,8 +156,10 @@ int main()
         perror("connect");
         exit(1);
     }
+   
     pthread_mutex_init(&console_m, NULL);
-    rc = pthread_create(&thread, NULL, listen_console, (void *) &s);
+    rc = pthread_create(&threads[0], NULL, listen_console, (void *) &s);
+    rc = pthread_create(&threads[1], NULL, read_datain, NULL);
     pthread_attr_destroy(&attr);
     
     printf("Connected.\n");
@@ -143,7 +178,8 @@ int main()
             exit(1);
         }
     }
-    pthread_cancel(thread);
+    pthread_cancel(threads[0]);
+    pthread_cancel(threads[1]);
     pthread_mutex_destroy(&console_m);
     close(s);
     

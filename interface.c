@@ -195,6 +195,7 @@ void MyDrawWindowCallback(
     char pause[100];
     char heading[100];
     char thrust[100];
+    char pitch[100];
     int  char_count = 0;
     
     float throttle[8];
@@ -214,6 +215,7 @@ void MyDrawWindowCallback(
     char_count += sprintf(pause,     ",%.2d", XPLMGetDatai(paused));
     char_count += sprintf(heading,   ",%.2f", XPLMGetDataf(magpsi));
     char_count += sprintf(thrust,    ",%.2f", throttle[0]);
+    char_count += sprintf(pitch,     ",%.2f", XPLMGetDataf(theta));
     
     strcat(speed_IAS, altitude);
     strcat(speed_IAS, AOA);
@@ -221,6 +223,7 @@ void MyDrawWindowCallback(
     strcat(speed_IAS, pause);
     strcat(speed_IAS, heading);
     strcat(speed_IAS, thrust);
+    strcat(speed_IAS, pitch);
     
     send_nmsg(s2, speed_IAS, char_count);
     redraw(inWindowID);

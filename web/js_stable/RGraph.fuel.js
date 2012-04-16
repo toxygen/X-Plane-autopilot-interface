@@ -1,4 +1,4 @@
-    /**
+/**
     * o------------------------------------------------------------------------------o
     * | This file is part of the RGraph package - you can learn more at:             |
     * |                                                                              |
@@ -381,7 +381,7 @@
     */
     RGraph.Fuel.prototype.getValue = function (e)
     {
-        var mouseXY = RGraph.getMouseXY(e);
+        var mouseXY = RGraph.getMouseXY(e)
         var angle   = RGraph.getAngleByXY(this.centerx, this.centery, mouseXY[0], mouseXY[1]);
 
         /**

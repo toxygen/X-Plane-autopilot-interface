@@ -365,7 +365,8 @@
         /**
         * Draw the kay if desired
         */
-        if (this.Get('chart.key') && this.Get('chart.key').length) {
+        if (this.Get('chart.key') != null) {
+            //this.Set('chart.key.position', 'graph');
             RGraph.DrawKey(this, this.Get('chart.key'), this.Get('chart.colors'));
         }
 

@@ -2,14 +2,15 @@
 
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/> 
+    <!--[if IE]><script type="text/javascript" src="js/excanvas.js"></script><![endif]-->
 
+	<script src="js/jquery.min.js"></script>
 	<script src="js/RGraph.common.core.js"></script>
 
 	<script src="js/RGraph.common.annotate.js"></script>  <!-- Just needed for annotating -->
 	<script src="js/RGraph.common.context.js"></script>   <!-- Just needed for context menus -->
 	<script src="js/RGraph.common.effects.js"></script>   <!-- Just needed for visual effects -->
 	<script src="js/RGraph.common.resizing.js"></script>  <!-- Just needed for resizing -->
-	<script src="js/RGraph.common.tooltips.js"></script>  <!-- Just needed for tooltips -->
 	<script src="js/RGraph.common.zoom.js"></script>      <!-- Just needed for zoom -->
 	<script src="js/RGraph.common.dynamic.js"></script>      <!-- Just needed for zoom -->
 
@@ -28,7 +29,6 @@
 	<script src="js/RGraph.pie.js"></script>              <!-- Just needed for pie AND donut charts -->
 	<script src="js/RGraph.radar.js"></script>            <!-- Just needed for radar charts -->
 	<script src="js/RGraph.rose.js"></script>             <!-- Just needed for rose charts -->
-	<script src="js/RGraph.rscatter.js"></script>         <!-- Just needed for rscatter charts -->
 	<script src="js/RGraph.scatter.js"></script>          <!-- Just needed for scatter charts -->
 	<script src="js/RGraph.thermometer.js"></script>      <!-- Just needed for thermometer charts -->
 	<script src="js/RGraph.vprogress.js"></script>        <!-- Just needed for vertical progress bars -->
@@ -39,24 +39,18 @@
 
 	<div>
 		<div style="margin-left:30%">
-			<canvas id="roll" width="600" height="250">[No canvas support]</canvas><br />
 			<span style="margin-left: 25px">
 				Number of updates: <span id="num_updates1">0</span>
-			</span>
+			</span><br>
+			<canvas id="roll" width="450" height="190">[No canvas support]</canvas><br />
 		</div>
 		<br>
 		<div style="margin-left:30%">
-			<canvas id="speed" width="600" height="250">[No canvas support]</canvas><br />
-			<span style="margin-left: 25px">
-				Number of updates: <span id="num_updates2">0</span>
-			</span>
+			<canvas id="speed" width="450" height="190">[No canvas support]</canvas><br />
 		</div>
 		<br>
 		<div style="margin-left:30%">
-			<canvas id="AOA" width="600" height="250">[No canvas support]</canvas><br />
-			<span style="margin-left: 25px">
-				Number of updates: <span id="num_updates3">0</span>
-			</span>
+			<canvas id="AOA" width="450" height="190">[No canvas support]</canvas><br />
 		</div>
 
 		<div style="text-align:center;position:absolute;bottom:20px;left:10px;">
@@ -70,93 +64,39 @@
 		</div>
 		
 		<div style="text-align:center;position:absolute;top:10px;left:10px;">
-	        <canvas width="210" height="450" id="altitude">[No canvas support]</canvas>
+	        <canvas id="altitude" width="210" height="450">[No canvas support]</canvas>
 	    </div>
-
 	</div>
 	<script>
 
 	var min = 0;
 	var max = 100;
-
-	var throttle = new RGraph.Meter('throttle', min, max, 74);
-
-	var grad1 = throttle.context.createRadialGradient(throttle.canvas.width / 2,throttle.canvas.height - 25,0,throttle.canvas.width / 2,throttle.canvas.height - 25,200);
-	grad1.addColorStop(0, 'green');
-	grad1.addColorStop(1, 'white');
-
-	var grad2 = throttle.context.createRadialGradient(throttle.canvas.width / 2, throttle.canvas.height - 25,0,throttle.canvas.width / 2, throttle.canvas.height - 25,200);
-	grad2.addColorStop(0, 'yellow');
-	grad2.addColorStop(1, 'white');
-
-	var grad3 = throttle.context.createRadialGradient(throttle.canvas.width / 2, throttle.canvas.height - 25,0,throttle.canvas.width / 2, throttle.canvas.height - 25,200);
-	grad3.addColorStop(0, 'red');
-	grad3.addColorStop(1, 'white');
-
-	throttle.Set('chart.labels.position', 'inside');
-	throttle.Set('chart.title', 'Throttle');
-	throttle.Set('chart.title.vpos', 3);
-	throttle.Set('chart.title.color', 'black');
-	throttle.Set('chart.green.color', grad1);
-	throttle.Set('chart.yellow.color', grad2);
-	throttle.Set('chart.red.color', grad3);
-	throttle.Set('chart.border', false);
-	throttle.Set('chart.needle.linewidth', 5);
-	throttle.Set('chart.needle.tail', true);
-	throttle.Set('chart.tickmarks.big.num', 0);
-	throttle.Set('chart.tickmarks.small.num', 0);
-	throttle.Set('chart.segment.radius.start', 100);
-	throttle.Set('chart.needle.radius', 80);
-	throttle.Set('chart.needle.linewidth', 2);
-	throttle.Set('chart.linewidth.segments', 15);
-	throttle.Set('chart.strokestyle', 'white');
-	throttle.Set('chart.text.size', 10);
-	throttle.Draw();
-
-	var odo2 = new RGraph.Odometer('compass', 0, 360, 0);
-	odo2.Set('chart.needle.color', 'black');
-	odo2.Set('chart.red.min', 359);
-	odo2.Set('chart.green.max', 359);
-	odo2.Set('chart.needle.tail', false);
-	odo2.Set('chart.label.area', 35);
-	odo2.Set('chart.border', RGraph.isOld() ? false : true);
-	odo2.Set('chart.labels', ['N','NE','E','SE','S','SW','W','NW']);
-	odo2.Set('chart.value.text', true);
-	odo2.Set('chart.title', 'Heading');
-	odo2.Set('chart.title.vpos', 0.4);
-	odo2.Set('chart.value.units.post', '°');
-	odo2.Set('chart.tickmarks', false);
-	odo2.Set('chart.tickmarks.highlighted', true);
-	odo2.Draw();
+	var httpRequest;
 	
-	var altitude = new RGraph.VProgress('altitude', 42, 100);
-	altitude.Set('chart.colors', ['red']);
-	altitude.Set('chart.margin', 5);
-	altitude.Set('chart.tooltips.effect', 'fade');
-	altitude.Set('chart.tickmarks', true);
-	altitude.Set('chart.tickmarks.inner', true);
-	altitude.Set('chart.tickmarks.color', '#333');
-	altitude.Set('chart.tickmarks.zerostart', true);
-	altitude.Set('chart.gutter.right', 125);
-	altitude.Set('chart.scale.decimals', 1);
-	altitude.Draw();
-	</script>
+	var speed2;
+	var altitude;
+	var odo2;
+	var throttle;
+	
+	var values;
+	
+	var roll_graph;
+	var speed_graph;
+	var AOA_graph;
+	
+	var speed_data  = [];
+	var roll_data   = [];
+	var AOA_data    = [];
+	
+	var update_count;
 
-
-
-
-	<script>
-	var speed2 = new RGraph.Gauge('speed_gauge', 0,300,67);
-	speed2.Set('chart.scale.decimals', 0);
-	speed2.Set('chart.tickmarks.small', 50);
-	speed2.Set('chart.tickmarks.big',10);
-	speed2.Set('chart.title.top', 'Speed');
-	speed2.Set('chart.title.top.bold', true);
-	speed2.Set('chart.title.top.size', 10);
-	speed2.Set('chart.title.bottom', 'kts');
-	speed2.Set('chart.title.bottom.size', 10);
-	speed2.Draw();
-
+	var roll_canvas;
+	var speed_canvas;
+	var AOA_canvas;	
+	var compass_canvas;
+	var speed_gauge_canvas;
+	var throttle_canvas;
+	var altitude_canvas;
 
 	/**
 	* Only need to add the custom event listener once
@@ -169,93 +109,174 @@
 	RGraph.Effects.Gauge.Grow(obj);
 	}
 	}*/
-	</script>        
 
-
-	<script>
+	function initVars()
+	{
+		update_count = document.getElementById("num_updates1");
+		roll_canvas  = document.getElementById("roll");
+		speed_canvas = document.getElementById("speed");                
+		AOA_canvas   = document.getElementById("AOA");
+		compass_canvas     = document.getElementById("compass");
+		speed_gauge_canvas = document.getElementById("speed_gauge");
+		throttle_canvas = document.getElementById("throttle");
+		altitude_canvas = document.getElementById("altitude");
+	}
+	
 	function initGraphs()
 	{
-		window["rollgraph"] = new RGraph.Line('roll', roll_data);
-		window["rollgraph"].Set('chart.background.barcolor1', 'white');
-		window["rollgraph"].Set('chart.title.xaxis', 'Time >>>');
-		window["rollgraph"].Set('chart.title.yaxis', 'Degrees');
-		window["rollgraph"].Set('chart.title.vpos', 0.5);
-		window["rollgraph"].Set('chart.title', 'Roll (náklon)');
-		window["rollgraph"].Set('chart.title.yaxis.pos', 0.5);
-		window["rollgraph"].Set('chart.title.xaxis.pos', 0.5);
-		window["rollgraph"].Set('chart.filled', false);
-		window["rollgraph"].Set('chart.colors', ['rgb(169, 222, 244)', 'red']);
-		window["rollgraph"].Set('chart.linewidth', 1.5);
-		window["rollgraph"].Set('chart.yaxispos', 'right');
-		window["rollgraph"].Set('chart.xaxispos', 'center');
-		window["rollgraph"].Set('chart.ymax',  90);
-		window["rollgraph"].Set('chart.xticks', 25);
+			throttle = new RGraph.Meter('throttle', min, max, 74);
+			throttle.Set('chart.resizable', true);
+			var grad1 = throttle.context.createRadialGradient(throttle.canvas.width / 2,throttle.canvas.height - 25,0,throttle.canvas.width / 2,throttle.canvas.height - 25,200);
+			grad1.addColorStop(0, 'green');
+			grad1.addColorStop(1, 'white');
 
-		window["speedgraph"] = new RGraph.Line('speed', speed_data);
-		window["speedgraph"].Set('chart.background.barcolor1', 'white');
-		window["speedgraph"].Set('chart.title.xaxis', 'Time >>>');
-		window["speedgraph"].Set('chart.title.yaxis', 'kts');
-		window["speedgraph"].Set('chart.title.vpos', 0.5);
-		window["speedgraph"].Set('chart.title', 'Speed');
-		window["speedgraph"].Set('chart.title.yaxis.pos', 0.5);
-		window["speedgraph"].Set('chart.title.xaxis.pos', 0.5);
-		window["speedgraph"].Set('chart.filled', false);
-		window["speedgraph"].Set('chart.colors', ['rgb(169, 222, 244)', 'red']);
-		window["speedgraph"].Set('chart.linewidth', 1.5);
-		window["speedgraph"].Set('chart.yaxispos', 'right');
-		window["speedgraph"].Set('chart.xaxispos', 'center');
-		window["speedgraph"].Set('chart.ymax',  320);
-		window["speedgraph"].Set('chart.xticks', 25);
+			var grad2 = throttle.context.createRadialGradient(throttle.canvas.width / 2, throttle.canvas.height - 25,0,throttle.canvas.width / 2, throttle.canvas.height - 25,200);
+			grad2.addColorStop(0, 'yellow');
+			grad2.addColorStop(1, 'white');
 
-		window["AOAgraph"] = new RGraph.Line('AOA', AOA_data);
-		window["AOAgraph"].Set('chart.background.barcolor1', 'white');
-		window["AOAgraph"].Set('chart.title.xaxis', 'Time >>>');
-		window["AOAgraph"].Set('chart.title.yaxis', 'Degrees');
-		window["AOAgraph"].Set('chart.title.vpos', 0.5);
-		window["AOAgraph"].Set('chart.title', 'AOA');
-		window["AOAgraph"].Set('chart.title.yaxis.pos', 0.5);
-		window["AOAgraph"].Set('chart.title.xaxis.pos', 0.5);
-		window["AOAgraph"].Set('chart.filled', false);
-		window["AOAgraph"].Set('chart.colors', ['rgb(169, 222, 244)', 'red']);
-		window["AOAgraph"].Set('chart.linewidth', 1.5);
-		window["AOAgraph"].Set('chart.yaxispos', 'right');
-		window["AOAgraph"].Set('chart.xaxispos', 'center');
-		window["AOAgraph"].Set('chart.ymax',  30);
-		window["AOAgraph"].Set('chart.xticks', 25);
+			var grad3 = throttle.context.createRadialGradient(throttle.canvas.width / 2, throttle.canvas.height - 25,0,throttle.canvas.width / 2, throttle.canvas.height - 25,200);
+			grad3.addColorStop(0, 'red');
+			grad3.addColorStop(1, 'white');
+
+			throttle.Set('chart.labels.position', 'inside');
+			throttle.Set('chart.title', 'Throttle');
+			throttle.Set('chart.title.vpos', 3);
+			throttle.Set('chart.title.color', 'black');
+			throttle.Set('chart.green.color', grad1);
+			throttle.Set('chart.yellow.color', grad2);
+			throttle.Set('chart.red.color', grad3);
+			throttle.Set('chart.border', false);
+			throttle.Set('chart.needle.linewidth', 5);
+			throttle.Set('chart.needle.tail', true);
+			throttle.Set('chart.tickmarks.big.num', 0);
+			throttle.Set('chart.tickmarks.small.num', 0);
+			throttle.Set('chart.segment.radius.start', 100);
+			throttle.Set('chart.needle.radius', 80);
+			throttle.Set('chart.needle.linewidth', 2);
+			throttle.Set('chart.linewidth.segments', 15);
+			throttle.Set('chart.strokestyle', 'white');
+			throttle.Set('chart.text.size', 10);
+		//	throttle.Set('chart.shadow', false);
+			throttle.Draw();
+
+			odo2 = new RGraph.Odometer('compass', 0, 360, 0);
+			odo2.Set('chart.resizable', true);
+			odo2.Set('chart.needle.color', 'black');
+			odo2.Set('chart.red.min', 359);
+			odo2.Set('chart.green.max', 359);
+			odo2.Set('chart.needle.tail', false);
+			odo2.Set('chart.label.area', 35);
+			odo2.Set('chart.border', RGraph.isOld() ? false : true);
+			odo2.Set('chart.labels', ['N','NE','E','SE','S','SW','W','NW']);
+			odo2.Set('chart.value.text', true);
+			odo2.Set('chart.title', 'Heading');
+			odo2.Set('chart.title.vpos', 0.4);
+			odo2.Set('chart.value.units.post', '°');
+			odo2.Set('chart.tickmarks', false);
+			odo2.Set('chart.tickmarks.highlighted', true);
+		//	odo2.Set('chart.shadow', false);
+			odo2.Draw();
+
+			altitude = new RGraph.VProgress('altitude', 42, 1000);
+			altitude.Set('chart.resizable', true);
+			altitude.Set('chart.colors', ['red']);
+			altitude.Set('chart.margin', 5);
+			altitude.Set('chart.tooltips.effect', 'fade');
+			altitude.Set('chart.tickmarks', true);
+			altitude.Set('chart.tickmarks.inner', true);
+			altitude.Set('chart.tickmarks.color', '#333');
+			altitude.Set('chart.tickmarks.zerostart', true);
+			altitude.Set('chart.gutter.right', 125);
+			altitude.Set('chart.scale.decimals', 1);
+			altitude.Draw();
+
+			speed2 = new RGraph.Gauge('speed_gauge', 0,300,67);
+			speed2.Set('chart.resizable', true);
+			speed2.Set('chart.adjustable', true);
+			speed2.Set('chart.scale.decimals', 0);
+			speed2.Set('chart.tickmarks.small', 50);
+			speed2.Set('chart.tickmarks.big',10);
+			speed2.Set('chart.title.top', 'Speed');
+			speed2.Set('chart.title.top.bold', true);
+			speed2.Set('chart.title.top.size', 10);
+			speed2.Set('chart.title.bottom', 'kts');
+			speed2.Set('chart.title.bottom.size', 10);
+			speed2.Set('chart.title.bottom.size', 10);
+
+		    RGraph.AddCustomEventListener(speed2, 'onadjustbegin', function (obj) {cl('START VALUE: ' + obj.value.toFixed(2)); $.post("set.php", { speed: obj.value.toFixed(2)} ); });
+		    RGraph.AddCustomEventListener(speed2, 'onadjust', function (obj) {});
+
+		//	speed2.Set('chart.shadow', false);
+			speed2.Draw();
+
+		
+		
+		roll_graph = new RGraph.Line('roll', roll_data);
+		roll_graph.Set('chart.background.barcolor1', 'white');
+		roll_graph.Set('chart.title.xaxis', 'Time >>>');
+		roll_graph.Set('chart.title.yaxis', 'Degrees');
+		roll_graph.Set('chart.title.vpos', 0.5);
+		roll_graph.Set('chart.title', 'Roll (náklon)');
+		roll_graph.Set('chart.title.yaxis.pos', 0.5);
+		roll_graph.Set('chart.title.xaxis.pos', 0.5);
+		roll_graph.Set('chart.filled', false);
+		roll_graph.Set('chart.colors', ['rgb(169, 222, 244)', 'red']);
+		roll_graph.Set('chart.linewidth', 1.5);
+		roll_graph.Set('chart.yaxispos', 'right');
+		roll_graph.Set('chart.xaxispos', 'center');
+		roll_graph.Set('chart.ymax',  90);
+		roll_graph.Set('chart.xticks', 25);
+
+		speed_graph = new RGraph.Line('speed', speed_data);
+		speed_graph.Set('chart.background.barcolor1', 'white');
+		speed_graph.Set('chart.title.xaxis', 'Time >>>');
+		speed_graph.Set('chart.title.yaxis', 'kts');
+		speed_graph.Set('chart.title.vpos', 0.5);
+		speed_graph.Set('chart.title', 'Speed');
+		speed_graph.Set('chart.title.yaxis.pos', 0.5);
+		speed_graph.Set('chart.title.xaxis.pos', 0.5);
+		speed_graph.Set('chart.filled', false);
+		speed_graph.Set('chart.colors', ['rgb(169, 222, 244)', 'red']);
+		speed_graph.Set('chart.linewidth', 1.5);
+		speed_graph.Set('chart.yaxispos', 'right');
+		speed_graph.Set('chart.xaxispos', 'center');
+		speed_graph.Set('chart.ymax',  320);
+		speed_graph.Set('chart.xticks', 25);
+
+		AOA_graph = new RGraph.Line('AOA', AOA_data);
+		AOA_graph.Set('chart.background.barcolor1', 'white');
+		AOA_graph.Set('chart.title.xaxis', 'Time >>>');
+		AOA_graph.Set('chart.title.yaxis', 'Degrees');
+		AOA_graph.Set('chart.title.vpos', 0.5);
+		AOA_graph.Set('chart.title', 'AOA');
+		AOA_graph.Set('chart.title.yaxis.pos', 0.5);
+		AOA_graph.Set('chart.title.xaxis.pos', 0.5);
+		AOA_graph.Set('chart.filled', false);
+		AOA_graph.Set('chart.colors', ['rgb(169, 222, 244)', 'red']);
+		AOA_graph.Set('chart.linewidth', 1.5);
+		AOA_graph.Set('chart.yaxispos', 'right');
+		AOA_graph.Set('chart.xaxispos', 'center');
+		AOA_graph.Set('chart.ymax',  30);
+		AOA_graph.Set('chart.xticks', 25);
 	}
 
-	function getGraph(graphname, id, storagename)
-	{
-		// After creating the chart, store it on the global window object
-		if (!window[graphname]) {
-			initGraphs();
-		}
-
-		return window[graphname];
-	}
 	function drawGraph (graf1)
 	{
 		values = graf1.split(",");
 		if(parseInt(values[4]) != 1)
 		{
-			document.getElementById("num_updates1").innerHTML = parseInt(document.getElementById("num_updates1").innerHTML) + 1;
-			document.getElementById("num_updates2").innerHTML = parseInt(document.getElementById("num_updates2").innerHTML) + 1;                
-			document.getElementById("num_updates3").innerHTML = parseInt(document.getElementById("num_updates3").innerHTML) + 1;
-			RGraph.Clear(document.getElementById("roll"));
-			RGraph.Clear(document.getElementById("speed"));                
-			RGraph.Clear(document.getElementById("AOA"));
-			RGraph.Clear(document.getElementById("odo2"));
-			RGraph.Clear(document.getElementById("speed2"));
-			RGraph.Clear(document.getElementById("throttle"));
-			RGraph.Clear(document.getElementById("altitude"));
+			update_count.innerHTML = parseInt(update_count.innerHTML) + 1;
 
-			var roll_graph = getGraph("rollgraph", "roll", roll_data);
+			RGraph.Clear(roll_canvas);
+			RGraph.Clear(speed_canvas);
+			RGraph.Clear(AOA_canvas);	
+			RGraph.Clear(compass_canvas);
+			RGraph.Clear(speed_gauge_canvas);
+			RGraph.Clear(throttle_canvas);
+			RGraph.Clear(altitude_canvas);
+
 			roll_graph.Draw();
-
-			var speed_graph = getGraph("speedgraph", "speed", speed_data);
 			speed_graph.Draw();
-
-			var AOA_graph = getGraph("AOAgraph", "AOA", AOA_data);
 			AOA_graph.Draw();
 
 			speed2.value = parseFloat(values[0]);
@@ -300,24 +321,19 @@
 			throttle.value = parseFloat(values[6]*100);
 			throttle.Draw();
 
-
-			{
-				if (document.all && RGraph.isIE8()) {
-					alert('[MSIE] Sorry, Internet Explorer 8 is not fast enough to support animated charts');
-				} else {
-					window["rollgraph"].original_data[1] = roll_data;
-					window["speedgraph"].original_data[1] = speed_data;
-					window["AOAgraph"].original_data[1] = AOA_data;
-					//setTimeout(drawGraph, 100, RGraph.random(1, 9));
-				}
+			if (document.all && RGraph.isIE8()) {
+				alert('[MSIE] Sorry, Internet Explorer 8 is not fast enough to support animated charts');
+			} else {
+				roll_graph.original_data[1] = roll_data;
+				speed_graph.original_data[1] = speed_data;
+				AOA_graph.original_data[1] = AOA_data;
+				//setTimeout(drawGraph, 100, RGraph.random(1, 9));
 			}
 		}
 	}
-	function initDraw (firstval)
+	function initGraph (firstval)
 	{
-		speed_data  = [];
-		roll_data   = [];
-		AOA_data    = [];
+		
 		l   = 0; // The letter ell - NOT a one
 
 		// Pre-pad the arrays with 250 null values
@@ -337,22 +353,20 @@
 	* @param function callback A function object that is called when the response is ready, there's an example below
 	*                          called "myCallback".
 	*/
-	function AjaxCall (url, callback)
+
+
+	function createAjax()
 	{
 		// Mozilla, Safari, ...
 		if (window.XMLHttpRequest) {
-			var httpRequest = new XMLHttpRequest();
+			httpRequest = new XMLHttpRequest();
 
 			// MSIE
 		} else if (window.ActiveXObject) {
-			var httpRequest = new ActiveXObject("Microsoft.XMLHTTP");
+			httpRequest = new ActiveXObject("Microsoft.XMLHTTP");
 		}
-
-		httpRequest.onreadystatechange = callback;
-		httpRequest.open('GET', url, true);
-		httpRequest.send();
 	}
-
+	
 
 	/**
 	* This sample callback function is called when the data is ready (readyState=4)
@@ -366,20 +380,22 @@
 			drawGraph(this.responseText);
 		}
 	}
-	</script>
 
-	<script>
 	function updateData()
 	{
-		AjaxCall('http://' + window.location.hostname + '/~toxygen/uav/roll.out', myCallback);
+		httpRequest.open('POST', 'http://' + window.location.hostname + window.location.pathname + 'data.out', true); // POST instead of GET to avoid caching at all costs
+		httpRequest.onreadystatechange = myCallback;
+		httpRequest.send();	
 	}
 
 	window.onload = function ()
 	{
-		initDraw(0);
+		initVars();
+		initGraphs();
+		initGraph(0);
+		createAjax();
 		window.setInterval(function() { updateData(); }, 100);
 	}
-
 
 	</script>
 </body>

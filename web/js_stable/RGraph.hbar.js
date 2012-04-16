@@ -85,13 +85,12 @@
             'chart.text.color':             'black',
             'chart.text.font':              'Arial',
             'chart.colors':                 ['red', 'blue', 'green', 'pink', 'yellow', 'cyan', 'navy', 'gray', 'black'],
-            'chart.colors.sequential':      false,
             'chart.labels':                 [],
             'chart.labels.above':           false,
             'chart.labels.above.decimals':  0,
             'chart.xlabels':                true,
             'chart.contextmenu':            null,
-            'chart.key':                    null,
+            'chart.key':                    [],
             'chart.key.background':         'white',
             'chart.key.position':           'graph',
             'chart.key.halign':             'right',
@@ -149,8 +148,8 @@
             'chart.noredraw':               false,
             'chart.events.click':           null,
             'chart.events.mousemove':       null,
+            
             'chart.noxaxis':                false,
-            'chart.noyaxis':                false,
             'chart.noxtickmarks':           false,
             'chart.noytickmarks':           false
         }
@@ -268,7 +267,7 @@
 
 
         // Draw the key if necessary
-        if (this.Get('chart.key') && this.Get('chart.key').length) {
+        if (this.Get('chart.key').length) {
             RGraph.DrawKey(this, this.Get('chart.key'), this.Get('chart.colors'));
         }
 
@@ -320,14 +319,12 @@
         this.context.strokeStyle = this.Get('chart.axis.color');
 
         // Draw the Y axis
-        if (this.Get('chart.noyaxis') == false) {
-            if (this.Get('chart.yaxispos') == 'center') {
-                this.context.moveTo(AA(this, halfway), this.gutterTop);
-                this.context.lineTo(AA(this, halfway), this.canvas.height - this.gutterBottom);
-            } else {
-                this.context.moveTo(AA(this, this.gutterLeft), this.gutterTop);
-                this.context.lineTo(AA(this, this.gutterLeft), this.canvas.height - this.gutterBottom);
-            }
+        if (this.Get('chart.yaxispos') == 'center') {
+            this.context.moveTo(AA(this, halfway), this.gutterTop);
+            this.context.lineTo(AA(this, halfway), this.canvas.height - this.gutterBottom);
+        } else {
+            this.context.moveTo(AA(this, this.gutterLeft), this.gutterTop);
+            this.context.lineTo(AA(this, this.gutterLeft), this.canvas.height - this.gutterBottom);
         }
 
         // Draw the X axis
@@ -337,7 +334,7 @@
         }
 
         // Draw the Y tickmarks
-        if (this.Get('chart.noytickmarks') == false && this.Get('chart.noyaxis') == false) {
+        if (this.Get('chart.noytickmarks') == false) {
             
             var yTickGap = (this.canvas.height - this.gutterTop - this.gutterBottom) / this.data.length;
     
@@ -365,7 +362,7 @@
 
 
         // Draw the X tickmarks
-        if (this.Get('chart.noxtickmarks') == false && this.Get('chart.noxaxis') == false) {
+        if (this.Get('chart.noxtickmarks') == false) {
             xTickGap = (this.canvas.width - this.gutterLeft - this.gutterRight ) / 10;
             yStart   = this.canvas.height - this.gutterBottom;
             yEnd     = (this.canvas.height - this.gutterBottom) + 3;

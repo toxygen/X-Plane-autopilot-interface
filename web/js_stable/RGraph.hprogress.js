@@ -103,7 +103,7 @@
             'chart.scale.decimals':     0,
             'chart.scale.point':        '.',
             'chart.scale.thousand':     ',',
-            'chart.key':                null,
+            'chart.key':                [],
             'chart.key.background':     'white',
             'chart.key.position':       'gutter',
             'chart.key.halign':             'right',
@@ -225,7 +225,7 @@
 
 
         // Draw the key if necessary
-        if (this.Get('chart.key') && this.Get('chart.key').length) {
+        if (this.Get('chart.key').length) {
             RGraph.DrawKey(this, this.Get('chart.key'), this.Get('chart.colors'));
         }
 

@@ -127,7 +127,7 @@
             'chart.units.post':             '',
             'chart.value.units.pre':        '',
             'chart.value.units.post':       '',
-            'chart.key':                    null,
+            'chart.key':                    [],
             'chart.key.background':         'white',
             'chart.key.position':           'graph',
             'chart.key.shadow':             false,
@@ -245,7 +245,7 @@
         /**
         * Move the centerx if the key is defined
         */
-        if (this.Get('chart.key') && this.Get('chart.key').length > 0 && this.canvas.width > this.canvas.height) {
+        if (this.Get('chart.key').length > 0 && this.canvas.width > this.canvas.height) {
             this.centerx = 5 + this.radius;
         }
 
@@ -304,7 +304,7 @@
         /**
         * Draw the key if requested
         */
-        if (this.Get('chart.key') && this.Get('chart.key').length > 0) {
+        if (this.Get('chart.key').length > 0) {
             // Build a colors array out of the needle colors
             var colors = [this.Get('chart.needle.color')];
             

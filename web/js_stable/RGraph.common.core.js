@@ -2154,17 +2154,8 @@
     */
     RGraph.hasTooltips = function (obj)
     {
-        if (typeof(obj.Get('chart.tooltips')) == 'object' && obj.Get('chart.tooltips')) {
-            for (var i=0; i<obj.Get('chart.tooltips').length; ++i) {
-                if (!RGraph.is_null(obj.Get('chart.tooltips')[i])) {
-                    return true;
-                }
-            }
-        } else if (typeof(obj.Get('chart.tooltips')) == 'function') {
-            return true;
-        }
-        
-        return false;
+        return    (typeof(obj.Get('chart.tooltips')) == 'object' && obj.Get('chart.tooltips') && obj.Get('chart.tooltips').length)
+               || typeof(obj.Get('chart.tooltips')) == 'function';
     }
 
 
@@ -2275,7 +2266,6 @@
     * @param  object e The event object
     * @return object   The applicable (if any) object
     */
-    RGraph.ObjectRegistry.getFirstObjectByXY =
     RGraph.ObjectRegistry.getObjectByXY = function (e)
     {
         var canvas  = e.target;
@@ -2448,13 +2438,6 @@
     RGraph.InstallEventListeners = function (obj)
     {
         /**
-        * Don't attempt to install event listeners for older versions of MSIE
-        */
-        if (RGraph.isOld()) {
-            return;
-        }
-
-        /**
         * If this function exists, then the dynamic file has been included.
         */
         if (RGraph.InstallCanvasClickListener) {
@@ -2476,6 +2459,22 @@
                   ) {
             alert('[RGRAPH] You appear to have used dynamic features but not included the file: RGraph.common.dynamic.js');
         }
+    }
+
+
+
+    /**
+    * Checks whther the given argument is null or not
+    * 
+    * @param mixed arg The variable/value to check
+    */
+    RGraph.is_null = function (arg)
+    {
+        if (arg == null || (typeof(arg)) == 'object' && !arg) {
+            return true;
+        }
+        
+        return false;
     }
 
 
@@ -2582,45 +2581,13 @@
 
 
     /**
-    * Makes an AJAX call. It calls the given callback (a function) when ready
-    * 
-    * @param string   url      The URL to retrieve
-    * @param function callback A function that is called when the response is ready, there's an example below
-    *                          called "myCallback".
-    */
-    RGraph.AJAX = function (url, callback)
-    {
-        // Mozilla, Safari, ...
-        if (window.XMLHttpRequest) {
-            var httpRequest = new XMLHttpRequest();
-        
-        // MSIE
-        } else if (window.ActiveXObject) {
-            var httpRequest = new ActiveXObject("Microsoft.XMLHTTP");
-        }
-        
-        httpRequest.onreadystatechange = function ()
-            {
-                if (this.readyState == 4 && this.status == 200) {
-                    this.__user_callback__ = callback;
-                    this.__user_callback__();
-                }
-            }
-        
-        httpRequest.open('GET', url, true);
-        httpRequest.send();
-    }
-
-
-    /**
     * Some debug functions. Because they're rarely changed - they're hand minified
     */
-    RGraph.is_null=function(arg){if(arg==null||(typeof(arg))=='object'&&!arg){return true;}return false;}
     RGraph.Timer=function(label){var d=new Date();console.log(label+': '+d.getSeconds()+'.'+d.getMilliseconds());}
     RGraph.Async=function(func){return setTimeout(func,arguments[1]?arguments[1]:1);}
     RGraph.isIE7=function(){return navigator.userAgent.indexOf('MSIE 7')>0;}
-    RGraph.isIE8=function(){return navigator.userAgent.indexOf('MSIE 8')>0;}
-    RGraph.isIE9=function(){return navigator.userAgent.indexOf('MSIE 9')>0;}
+    RGraph.isIE8=function(){return navigator.userAgent.indexOf('MSIE 8') > 0;}
+    RGraph.isIE9=function(){return navigator.userAgent.indexOf('MSIE 9') > 0;}
     RGraph.isIE9up=function(){navigator.userAgent.match(/MSIE (\d+)/);return Number(RegExp.$1)>=9;}
     RGraph.isOld=function(){return RGraph.isIE7()||RGraph.isIE8();}
     function pd(variable){RGraph.pr(variable);}

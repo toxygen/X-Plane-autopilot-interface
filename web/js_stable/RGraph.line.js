@@ -127,7 +127,6 @@
             'chart.shadow.color':           'rgba(0,0,0,0.5)',
             'chart.tooltips':               null,
             'chart.tooltips.hotspot.xonly': false,
-            'chart.tooltips.hotspot.size':  5,
             'chart.tooltips.effect':        'fade',
             'chart.tooltips.css.class':     'RGraph_tooltip',
             'chart.tooltips.event':         'onmousemove',
@@ -136,7 +135,7 @@
             'chart.highlight.stroke':       'gray',
             'chart.highlight.fill':         'white',
             'chart.stepped':                false,
-            'chart.key':                    null,
+            'chart.key':                    [],
             'chart.key.background':         'white',
             'chart.key.position':           'graph',
             'chart.key.halign':             null,
@@ -601,6 +600,8 @@
                 } else if (typeof(this.Get('chart.fillstyle')) == 'string') {
                     var fill = this.Get('chart.fillstyle');
     
+                } else {
+                    alert('[LINE] Warning: chart.fillstyle must be either a string or an array with the same number of elements as you have sets of data');
                 }
             } else if (this.Get('chart.filled')) {
                 var fill = this.Get('chart.colors')[j];
@@ -718,7 +719,7 @@
         this.DrawRange();
         
         // Draw a key if necessary
-        if (this.Get('chart.key') && this.Get('chart.key').length && RGraph.DrawKey) {
+        if (this.Get('chart.key').length && RGraph.DrawKey) {
             RGraph.DrawKey(this, this.Get('chart.key'), this.Get('chart.colors'));
         }
 
@@ -2162,10 +2163,10 @@
             var y = obj.coords[i][1];
 
             // Do this if the hotspot is triggered by the X coord AND the Y coord
-            if (   mouseX <= (x + obj.Get('chart.tooltips.hotspot.size'))
-                && mouseX >= (x - obj.Get('chart.tooltips.hotspot.size'))
-                && mouseY <= (y + obj.Get('chart.tooltips.hotspot.size'))
-                && mouseY >= (y - obj.Get('chart.tooltips.hotspot.size'))
+            if (   mouseX <= (x + 5)
+                && mouseX >= (x - 5)
+                && mouseY <= (y + 5)
+                && mouseY >= (y - 5)
                ) {
 
                     var tooltip = RGraph.parseTooltipText(this.Get('chart.tooltips'), i);
@@ -2181,8 +2182,8 @@
                     return {0:obj, 1:x, 2:y, 3:i, 'object': obj, 'x': x, 'y': y, 'index': i, 'tooltip': tooltip, 'dataset': dataset, 'index_adjusted': idx};
 
             } else if (    obj.Get('chart.tooltips.hotspot.xonly') == true
-                        && mouseX <= (x + obj.Get('chart.tooltips.hotspot.size'))
-                        && mouseX >= (x - obj.Get('chart.tooltips.hotspot.size'))) {
+                        && mouseX <= (x + 5)
+                        && mouseX >= (x - 5)) {
 
                         var tooltip = RGraph.parseTooltipText(this.Get('chart.tooltips'), i);
 
@@ -2389,65 +2390,4 @@
                 RGraph.FireCustomEvent(this, 'onadjust');
             }
         }
-    }
-
-
-    /**
-    * This function can be used when the canvas is clicked on (or similar - depending on the event)
-    * to retrieve the relevant Y coordinate for a particular value.
-    * 
-    * @param int value The value to get the Y coordinate for
-    */
-    RGraph.Line.prototype.getYCoord = function (value)
-    {
-        if (typeof(value) != 'number') {
-            return null;
-        }
-
-        var y;
-        var xaxispos = this.Get('chart.xaxispos');
-
-        // Higher than max
-        if (value > this.max) {
-            value = this.max;
-        }
-
-        if (xaxispos == 'top') {
-        
-            // Account for negative numbers
-            if (value < 0) {
-                value = Math.abs(value);
-            }
-
-            y = ((value - this.min) / (this.max - this.min)) * this.grapharea;
-
-            // Inverted Y labels
-            if (this.Get('chart.ylabels.invert')) {
-                y = this.grapharea - y;
-            }
-
-            y = y + this.gutterTop
-
-        } else if (xaxispos == 'center') {
-
-            y = ((value - this.min) / (this.max - this.min)) * (this.grapharea / 2);
-            y = (this.grapharea / 2) - y;
-            y += this.gutterTop;
-
-        } else {
-
-            if (value < this.min) value = this.min;
-            if (value > this.max) value = this.max;
-
-            y = ((value - this.min) / (this.max - this.min)) * this.grapharea;
-            
-            // Inverted Y labels
-            if (this.Get('chart.ylabels.invert')) {
-                y = this.grapharea - y;
-            }
-
-            y = this.canvas.height - this.gutterBottom - y;
-        }
-        
-        return y;
     }

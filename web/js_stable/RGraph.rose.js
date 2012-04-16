@@ -117,7 +117,7 @@
             'chart.scale.point':            '.',
             'chart.scale.thousand':         ',',
             'chart.variant':                'stacked',
-            'chart.animation.roundrobin.factor':  1,
+            'chart.animation.grow.factor':  1,
             'chart.exploded':               0,
             'chart.events.mousemove':       null,
             'chart.events.click':           null
@@ -450,8 +450,8 @@
 
                         var radius = ((this.data[i] - this.Get('chart.ymin')) / (this.max - this.Get('chart.ymin'))) * (this.radius - 10);
 
-                        var startAngle = (this.startRadians * this.Get('chart.animation.roundrobin.factor')) - (Math.PI / 2) + margin;
-                        var endAngle   = (this.startRadians * this.Get('chart.animation.roundrobin.factor')) + (segmentRadians) - (Math.PI / 2) - margin;
+                        var startAngle = (this.startRadians * this.Get('chart.animation.grow.factor')) - (Math.PI / 2) + margin;
+                        var endAngle   = (this.startRadians * this.Get('chart.animation.grow.factor')) + (segmentRadians) - (Math.PI / 2) - margin;
 
                         var exploded  = this.getexploded(i, startAngle, endAngle, this.Get('chart.exploded'));
                         var explodedX = exploded[0];
@@ -459,7 +459,7 @@
 
                         this.context.arc(this.centerx + explodedX,
                                          this.centery + explodedY,
-                                         radius * this.Get('chart.animation.roundrobin.factor'),
+                                         radius * this.Get('chart.animation.grow.factor'),
                                          startAngle,
                                          endAngle,
                                          0);
@@ -477,7 +477,7 @@
                                       startAngle,
                                       endAngle,
                                       0,
-                                      radius * this.Get('chart.animation.roundrobin.factor'),
+                                      radius * this.Get('chart.animation.grow.factor'),
                                       this.centerx + explodedX,
                                       this.centery + explodedY
                                      ]);
@@ -492,8 +492,8 @@
 
                     for (var j=0; j<this.data[i].length; ++j) {
                     
-                        var startAngle = (this.startRadians * this.Get('chart.animation.roundrobin.factor')) - (Math.PI / 2) + margin;
-                        var endAngle  = (this.startRadians * this.Get('chart.animation.roundrobin.factor'))+ segmentRadians - (Math.PI / 2) - margin;
+                        var startAngle = (this.startRadians * this.Get('chart.animation.grow.factor')) - (Math.PI / 2) + margin;
+                        var endAngle  = (this.startRadians * this.Get('chart.animation.grow.factor'))+ segmentRadians - (Math.PI / 2) - margin;
                     
                         var exploded  = this.getexploded(i, startAngle, endAngle, this.Get('chart.exploded'));
                         var explodedX = exploded[0];
@@ -507,7 +507,7 @@
                     
                                 this.context.arc(this.centerx + explodedX,
                                                  this.centery + explodedY,
-                                                 endRadius * this.Get('chart.animation.roundrobin.factor'),
+                                                 endRadius * this.Get('chart.animation.grow.factor'),
                                                  startAngle,
                                                  endAngle,
                                                  0);
@@ -520,7 +520,7 @@
                                               startAngle,
                                               endAngle,
                                               0,
-                                              endRadius * this.Get('chart.animation.roundrobin.factor'),
+                                              endRadius * this.Get('chart.animation.grow.factor'),
                                               this.centerx + explodedX,
                                               this.centery + explodedY
                                              ]);
@@ -534,14 +534,14 @@
                 
                                 this.context.arc(this.centerx + explodedX,
                                                  this.centery + explodedY,
-                                                 startRadius  * this.Get('chart.animation.roundrobin.factor'),
+                                                 startRadius  * this.Get('chart.animation.grow.factor'),
                                                  startAngle,
                                                  endAngle,
                                                  0);
                 
                                 this.context.arc(this.centerx + explodedX,
                                                  this.centery + explodedY,
-                                                 endRadius  * this.Get('chart.animation.roundrobin.factor'),
+                                                 endRadius  * this.Get('chart.animation.grow.factor'),
                                                  endAngle,
                                                  startAngle,
                                                  true);
@@ -553,8 +553,8 @@
                             this.angles.push([
                                               startAngle,
                                               endAngle,
-                                              startRadius * this.Get('chart.animation.roundrobin.factor'),
-                                              endRadius * this.Get('chart.animation.roundrobin.factor'),
+                                              startRadius * this.Get('chart.animation.grow.factor'),
+                                              endRadius * this.Get('chart.animation.grow.factor'),
                                               this.centerx + explodedX,
                                               this.centery + explodedY,
                                              ]);

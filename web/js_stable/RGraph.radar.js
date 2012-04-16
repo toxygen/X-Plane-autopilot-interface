@@ -63,7 +63,7 @@
             'chart.labels.offsetx':        10,
             'chart.labels.offsety':        10,
             'chart.background.circles':    true,
-            'chart.text.size':             10,
+            'chart.text.diameter':         10,
             'chart.text.font':             'Arial',
             'chart.text.color':            'black',
             'chart.title':                 '',
@@ -158,10 +158,6 @@
     */
     RGraph.Radar.prototype.Set = function (name, value)
     {
-        if (name == 'chart.text.diameter') {
-            name = 'chart.text.size';
-        }
-
         this.properties[name] = value;
 
         /**
@@ -180,10 +176,6 @@
     */
     RGraph.Radar.prototype.Get = function (name)
     {
-        if (name == 'chart.text.diameter') {
-            name = 'chart.text.size';
-        }
-
         return this.properties[name];
     }
 
@@ -534,7 +526,7 @@
             var offsetx = this.Get('chart.labels.offsetx');
             var offsety = this.Get('chart.labels.offsety');
             var font    = this.Get('chart.text.font');
-            var size    = this.Get('chart.text.size');
+            var size    = this.Get('chart.text.diameter');
             var radius  = this.radius;
                 
 
@@ -600,7 +592,7 @@
 
         var r          = this.radius;
         var font_face  = this.Get('chart.text.font');
-        var font_size  = this.Get('chart.text.size');
+        var font_size  = this.Get('chart.text.diameter');
         var context    = this.context;
         var axes       = this.Get('chart.labels.axes').toLowerCase();
         var color      = 'rgba(255,255,255,0.8)';
@@ -671,7 +663,7 @@
         var labels  = this.Get('chart.labels.specific');
         var context = this.context;
         var font    = this.Get('chart.text.font');
-        var size    = this.Get('chart.text.size');
+        var size    = this.Get('chart.text.diameter');
         var axes    = this.Get('chart.labels.axes').toLowerCase();
         var interval = (this.radius * 2) / (labels.length * 2);
 

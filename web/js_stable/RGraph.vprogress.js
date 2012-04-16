@@ -116,7 +116,7 @@
             'chart.scale.thousand':     ',',
             'chart.scale.point':        '.',
             'chart.scale.visible':      true,
-            'chart.key':                null,
+            'chart.key':                [],
             'chart.key.background':     'white',
             'chart.key.position':       'graph',
             'chart.key.halign':             'right',
@@ -234,7 +234,7 @@
         RGraph.InstallEventListeners(this);
         
         // Draw a key if necessary
-        if (this.Get('chart.key') && this.Get('chart.key').length) {
+        if (this.Get('chart.key').length) {
             RGraph.DrawKey(this, this.Get('chart.key'), this.Get('chart.colors'));
         }
 

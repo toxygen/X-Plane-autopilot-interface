@@ -937,15 +937,15 @@
 
 
     /**
-    * RoundRobin
+    * Unfold
     * 
-    * This effect is similar to the Pie chart RoundRobin effect
+    * This effect gradually increases the radiuss and decrease the margin of the Rose chart
     * 
     * @param object   obj The chart object
     * @param              Not used - pass null
     * @param function     An optional callback function
     */
-    RGraph.Effects.Rose.RoundRobin = function (obj)
+    RGraph.Effects.Rose.Grow = function (obj)
     {
         var numFrames       = 60;
         var currentFrame    = 0;
@@ -954,21 +954,21 @@
         var callback        = arguments[2];
 
         obj.Set('chart.margin', margin);
-        obj.Set('chart.animation.roundrobin.factor', 0);
+        obj.Set('chart.animation.grow.factor', 0);
 
         //RGraph.Effects.Animate(obj, {'chart.margin': original_margin, 'chart.animation.grow.factor': 1, 'frames': 45}, arguments[2]);
-        function RoundRobin_inner ()
+        function Grow_inner ()
         {
             if (currentFrame++ < numFrames) {
-                obj.Set('chart.animation.roundrobin.factor', currentFrame / numFrames);
+                obj.Set('chart.animation.grow.factor', currentFrame / numFrames);
                 obj.Set('chart.margin', (currentFrame / numFrames) * original_margin);
                 RGraph.Clear(obj.canvas);
                 RGraph.RedrawCanvas(obj.canvas);
                 
-                RGraph.Effects.UpdateCanvas(RoundRobin_inner);
+                RGraph.Effects.UpdateCanvas(Grow_inner);
 
             } else {
-                obj.Set('chart.animation.roundrobin.factor', 1);
+                obj.Set('chart.animation.grow.factor', 1);
                 obj.Set('chart.margin', original_margin);
                 RGraph.Clear(obj.canvas);
                 RGraph.RedrawCanvas(obj.canvas);
@@ -979,7 +979,7 @@
             }
         }
         
-        RGraph.Effects.UpdateCanvas(RoundRobin_inner);
+        RGraph.Effects.UpdateCanvas(Grow_inner);
     }
 
 
@@ -1648,8 +1648,8 @@
             obj.Set('chart.ymax', max);
         }
         
-        //obj.Set('chart.multiplier.x', 0);
-        //obj.Set('chart.multiplier.w', 0);
+        obj.Set('chart.multiplier.x', 0);
+        obj.Set('chart.multiplier.w', 0);
 
         function Grow_inner ()
         {
@@ -1657,9 +1657,9 @@
                 obj.data[i] = data[i] * (numFrame/totalFrames);
             }
             
-            var multiplier = Math.pow(Math.sin(((numFrame / totalFrames) * 90) / (180 / Math.PI)), 20);
-            //obj.Set('chart.multiplier.x', (numFrame / totalFrames) * multiplier);
-            //obj.Set('chart.multiplier.w', (numFrame / totalFrames) * multiplier);
+            var multiplier = Math.pow(Math.sin(((numFrame / totalFrames) * 90) / 57.3), 20);
+            obj.Set('chart.multiplier.x', (numFrame / totalFrames) * multiplier);
+            obj.Set('chart.multiplier.w', (numFrame / totalFrames) * multiplier);
             
             RGraph.Clear(obj.canvas);
             RGraph.RedrawCanvas(obj.canvas);

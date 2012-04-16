@@ -247,26 +247,22 @@
             */
             var objects = RGraph.ObjectRegistry.getObjectsByXY(e);
 
-            if (objects && objects.length) {
+            if (objects) {
                 for (var i=0; i<objects.length; ++i) {
+
                     var obj = objects[i];
                     var id  = obj.id;
-                    
-                    if (!obj.getShape) {
-                        continue;
-                    }
-
-
-                    var shape = obj.getShape(e);
-
-
-
 
                     // ================================================================================================ //
                     // This facilitates the chart.events.mousemove option
                     // ================================================================================================ //
                     
-                    var func = obj.Get('chart.events.mousemove');
+                    if (!obj.getShape) {
+                        continue;
+                    }
+                    
+                    var func  = obj.Get('chart.events.mousemove');
+                    var shape = obj.getShape(e);
 
                     /**
                     * This bit saves the current pointer style if there isn't one already saved
@@ -324,6 +320,7 @@
                     }
                 }
             }
+
 
             // ================================================================================================ //
             // Crosshairs

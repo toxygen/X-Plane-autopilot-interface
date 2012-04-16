@@ -50,7 +50,6 @@
 
         // Various config type stuff
         this.properties = {
-            'chart.background.color':       'white',
             'chart.gutter.left':            15,
             'chart.gutter.right':           15,
             'chart.gutter.top':             15,
@@ -94,6 +93,7 @@
             'chart.zoom.frames':            25,
             'chart.zoom.delay':             16.666,
             'chart.zoom.shadow':            true,
+
             'chart.zoom.background':        true,
             'chart.zoom.action':            'zoom',
             'chart.annotatable':            false,
@@ -283,8 +283,7 @@
         // Draw the shadow
         if (this.Get('chart.shadow')) {
             this.context.beginPath();
-
-                this.context.fillStyle     = this.Get('chart.background.color');
+                this.context.fillStyle     = 'white';
                 this.context.shadowColor   = this.Get('chart.shadow.color');
                 this.context.shadowBlur    = this.Get('chart.shadow.blur');
                 this.context.shadowOffsetX = this.Get('chart.shadow.offsetx');
@@ -313,9 +312,9 @@
                 this.context.stroke();
             }
 
-            // Draw the semi-circle that makes the tickmarks
+            // Draw the white semi-circle that makes the tickmarks
             this.context.beginPath();
-            this.context.fillStyle = this.Get('chart.background.color');
+            this.context.fillStyle = 'white'
             this.context.arc(this.centerx, this.centery, this.radius - 4, 3.14, 6.28, false);
             this.context.closePath();
             this.context.fill();
@@ -341,7 +340,7 @@
 
         // Draw the white circle that makes the tickmarks
         this.context.beginPath();
-        this.context.fillStyle = this.Get('chart.background.color');
+        this.context.fillStyle = 'white';
         this.context.arc(this.centerx, this.centery, this.radius - 7, Math.PI, Math.PI * 2, false);
         this.context.closePath();
         this.context.fill();
