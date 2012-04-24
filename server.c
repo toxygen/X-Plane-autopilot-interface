@@ -30,6 +30,7 @@
 #include "XPLMDisplay.h"
 #include "XPLMGraphics.h"
 #include "ui.h"
+#include "control.h"
 
 int s1, s2;
 int len;
@@ -147,6 +148,7 @@ void * server()
                 strcpy(msg, "client: ");
                 strcat(msg, str);
                 printMsg(msg);
+                parse_command(msg);
                 send_msg(s2, str);
             }
         }

@@ -20,10 +20,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <pthread.h>
-#include "XPLMDisplay.h"
-#include "XPLMGraphics.h"
 #include "settings.h"
 #include "server.h"
+#include "ui.h"
 
 extern char ** lines;
 extern pthread_mutex_t lines_m;

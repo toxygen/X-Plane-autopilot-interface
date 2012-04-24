@@ -17,11 +17,9 @@
  *
  */
 
-void redraw(
-	       XPLMWindowID inWindowID
-	    );
+#include "XPLMDisplay.h"
+#include "XPLMGraphics.h"
 
+void redraw(XPLMWindowID inWindowID);
 
-void printMsg(
-	      char * text
-	      );
+void printMsg(char * text);

@@ -28,22 +28,28 @@
 #include "ui.h"
 #include "settings.h"
 #include "server.h"
+#include "control.h"
 
 char **      lines    = NULL;
 XPLMWindowID gWindow  = NULL;
 int          gClicked = 0;
-pthread_t    thread;
+pthread_t    threads[3];
 pthread_mutex_t lines_m;
 
 XPLMDataRef  indicated_airspeed2;   /* float */
-XPLMDataRef  alpha;                 /* float */
-XPLMDataRef  magpsi;                /* float */
-XPLMDataRef  phi;                   /* float */
-XPLMDataRef  theta;                 /* float */
-XPLMDataRef  elevation;             /* double */
+XPLMDataRef  alpha;                 /* float */    /* AOA      */
+XPLMDataRef  magpsi;                /* float */    /* mag head */
+XPLMDataRef  phi;                   /* float */    /* roll     */
+XPLMDataRef  theta;                 /* float */    /* pitch    */
+XPLMDataRef  elevation;             /* double */   /* altitude */
 XPLMDataRef  throttle_ref;          /* float */
 XPLMDataRef  paused;                /* int */
 XPLMDataRef  engine_count;          /* int */
+XPLMDataRef  aileron1_ref;          /* float */
+XPLMDataRef  aileron2_ref;          /* float */
+XPLMDataRef  aileron3_ref;          /* float */
+XPLMDataRef  aileron4_ref;          /* float */
+XPLMDataRef  override;              /* int */
 
 void cleanup()
 {
@@ -136,10 +142,21 @@ PLUGIN_API int XPluginStart(
     throttle_ref = XPLMFindDataRef("sim/flightmodel/engine/ENGN_thro");
     if(throttle_ref != NULL) printMsg("Throttle initialized");
     
+    override = XPLMFindDataRef("sim/operation/override/override_control_surfaces");
     paused = XPLMFindDataRef("sim/time/paused");
     engine_count = XPLMFindDataRef("sim/aircraft/engine/acf_num_engines");
+
+    aileron1_ref = XPLMFindDataRef("sim/flightmodel/controls/wing2l_ail1def");
+    if(aileron1_ref != NULL) printMsg("Aileron 1 initialized");
+
+    aileron2_ref = XPLMFindDataRef("sim/flightmodel/controls/wing2r_ail1def");
+    if(aileron2_ref != NULL) printMsg("Aileron 2 initialized");
+
+    aileron3_ref = XPLMFindDataRef("sim/flightmodel/controls/wing1l_ail1def");
+    aileron4_ref = XPLMFindDataRef("sim/flightmodel/controls/wing1r_ail1def");
     
-    rc = pthread_create(&thread, NULL, server, NULL);
+    rc = pthread_create(&threads[0], NULL, server, NULL);
+    rc = pthread_create(&threads[1], NULL, ap_loop, NULL);
     pthread_attr_destroy(&attr);
     return 1;
 }
@@ -158,7 +175,8 @@ PLUGIN_API void	XPluginStop(void)
  */
 PLUGIN_API void XPluginDisable(void)
 {
-    pthread_cancel(thread);
+    pthread_cancel(threads[0]);
+    pthread_cancel(threads[1]);
     pthread_mutex_destroy(&lines_m);
 }
 
@@ -187,6 +205,7 @@ void MyDrawWindowCallback(
                           XPLMWindowID inWindowID,
                           void *       inRefcon)
 {
+    /* transfer to pointers, probably leaking memory */
     int left, top, right, bottom;
     char speed_IAS[100];
     char altitude[100];
@@ -197,10 +216,11 @@ void MyDrawWindowCallback(
     char thrust[100];
     char pitch[100];
     int  char_count = 0;
-    
     float throttle[8];
     
     XPLMGetDatavf(throttle_ref, throttle, 0, 8);
+    
+    set_roll(10);
     
     /* get the size of window */
     XPLMGetWindowGeometry(inWindowID, &left, &top, &right, &bottom);
