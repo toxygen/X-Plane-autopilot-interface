@@ -230,7 +230,6 @@ void MyDrawWindowCallback(
     XPLMGetDatavf(throttle_ref, throttle, 0, 8);
     
     set_heading(240.0F);
-    set_elevation(1000.0);
     
     /* get the size of window */
     XPLMGetWindowGeometry(inWindowID, &left, &top, &right, &bottom);

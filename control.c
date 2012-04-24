@@ -6,6 +6,8 @@
 //  Copyright 2012 FIT CVUT. All rights reserved.
 //
 
+#include <stdio.h>
+
 #include <string.h>
 #include <math.h>
 #include <float.h>
@@ -144,7 +146,10 @@ void ap_elev(float meters)
 {
     static double error;
     static double last = 0;
-    //error = elev_meters - XPLMGetDatad(elevation);
+    error = XPLMGetDatad(elevation) - last;
+    last = XPLMGetDatad(elevation);    
+    
+    //set_elevator(error);
    /* if(XPLMGetDatad(elevation));
     error = last - XPLMGetDatad(elevation);
     if(error > 20) { error = -2; }
@@ -152,7 +157,7 @@ void ap_elev(float meters)
     if(error < 0)  { error = 5; }
     else { error = 0; }
 
-    last = XPLMGetDatad(elevation);
+
     
     set_elevator(error);*/
 }
@@ -167,8 +172,10 @@ void ap_roll(float deg)
     static float result;
     /* TODO make portable for HIL simulation */
     cur_phi = XPLMGetDataf(phi);
-    
     result = K_p * (deg - cur_phi);
+    if(cur_phi > 20.0F)  { result =  -5; }
+    if(cur_phi < -20.0F) { result =  5; }
+
     set_ailerons(result);
 }
 
@@ -178,6 +185,7 @@ void ap_heading(float deg)
     static float error = 0;
     cur_magpsi = XPLMGetDataf(magpsi);
     error = heading - cur_magpsi;
+    printf("heading %f error %f magpsi %f\n",heading, error, cur_magpsi);
     
     ap_roll(error);
 }
@@ -187,7 +195,7 @@ void * ap_loop()
     while(1)
     {
         ap_heading(heading);
-        ap_elev(elev_meters);
+        //ap_elev(elev_meters);
         usleep(100000);
     }
 }
