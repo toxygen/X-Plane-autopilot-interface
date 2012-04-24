@@ -14,6 +14,12 @@ extern XPLMDataRef aileron2_ref;
 extern XPLMDataRef aileron3_ref;
 extern XPLMDataRef aileron4_ref;
 extern XPLMDataRef phi;
+extern XPLMDataRef magpsi;
+extern XPLMDataRef elevation;
+extern XPLMDataRef rudder1;
+extern XPLMDataRef rudder2;
+extern XPLMDataRef rudder3;
+extern XPLMDataRef rudder4;
 
 void parse_command(char *);
 int  ap_on();
@@ -22,3 +28,5 @@ void ap_roll(float);
 void set_ailerons(float);
 void * ap_loop();
 void set_roll(float);
+void set_heading(float);
+void set_elevation(double);

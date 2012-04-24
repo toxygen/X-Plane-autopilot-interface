@@ -50,6 +50,10 @@ XPLMDataRef  aileron2_ref;          /* float */
 XPLMDataRef  aileron3_ref;          /* float */
 XPLMDataRef  aileron4_ref;          /* float */
 XPLMDataRef  override;              /* int */
+XPLMDataRef  rudder1;               /* float */
+XPLMDataRef  rudder2;               /* float */
+XPLMDataRef  rudder3;               /* float */
+XPLMDataRef  rudder4;               /* float */
 
 void cleanup()
 {
@@ -154,6 +158,11 @@ PLUGIN_API int XPluginStart(
 
     aileron3_ref = XPLMFindDataRef("sim/flightmodel/controls/wing1l_ail1def");
     aileron4_ref = XPLMFindDataRef("sim/flightmodel/controls/wing1r_ail1def");
+
+    rudder1 = XPLMFindDataRef("sim/flightmodel/controls/wing1l_elv1def");
+    rudder2 = XPLMFindDataRef("sim/flightmodel/controls/wing1r_elv1def");
+    rudder3 = XPLMFindDataRef("sim/flightmodel/controls/wing2l_elv1def");
+    rudder4 = XPLMFindDataRef("sim/flightmodel/controls/wing2r_elv1def");
     
     rc = pthread_create(&threads[0], NULL, server, NULL);
     rc = pthread_create(&threads[1], NULL, ap_loop, NULL);
@@ -220,7 +229,8 @@ void MyDrawWindowCallback(
     
     XPLMGetDatavf(throttle_ref, throttle, 0, 8);
     
-    set_roll(10);
+    set_heading(240.0F);
+    set_elevation(1000.0);
     
     /* get the size of window */
     XPLMGetWindowGeometry(inWindowID, &left, &top, &right, &bottom);
