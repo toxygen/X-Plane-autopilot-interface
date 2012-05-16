@@ -24,12 +24,14 @@
 
 #define CLIMB_LIMIT     800
 #define DESCEND_LIMIT  -800
-
+#define MAX_ROLL 20
 
 static int result;
-float roll_deg;
-float heading;
+float  roll_deg;
+float  heading;
 double elev_meters;
+int    dt = 100000; // microseconds = 0.1s
+int    ap = 0;
 
 
 void parse_command(char * input)
@@ -53,6 +55,7 @@ int ap_on()
     result = XPLMGetDatai(override);
     if(result)
     {
+        ap = 1;
         printMsg("Autopilot turned on");
         return 1;
     }
@@ -67,6 +70,7 @@ int ap_off()
     XPLMSetDatai(override, 0);
     if(result)
     {
+        ap = 0;
         printMsg("Autopilot turned off");    
         return 1;
     }
@@ -113,6 +117,9 @@ void set_ailerons(float deg)
     XPLMSetDataf(aileron4_ref, right);
 }
 
+/*
+ * Return current heading
+ */
 float get_heading()
 {
     return XPLMGetDataf(magpsi);
@@ -220,6 +227,9 @@ void ap_roll(float deg)
     static float error;
     static float Kp = 1.0f;
     
+    if(deg >  MAX_ROLL) { deg =  MAX_ROLL; }
+    if(deg < -MAX_ROLL) { deg = -MAX_ROLL; }
+    
     cur_phi = get_roll();
     error   = deg - cur_phi;
     signal  = Kp * error;
@@ -235,23 +245,50 @@ void ap_heading(float deg)
     static float cur_magpsi;
     static float error;
     static float signal;
+    static float derivative;
+    static float integral = 0;
+    static float last = 0;
     static float Kp = 1.0f;
-
+    static float Kd = 1.0f;
+    static float Ki = 0.05f;
+    static int count = 0;
+    
     cur_magpsi = get_heading();
     error      = heading - cur_magpsi;
-    signal     = Kp * error;
+    
+    derivative = cur_magpsi - last;
+    last = cur_magpsi;
+    
+    // integrate only if autopilot turned on
+    if(!ap) 
+    {
+        integral = 0;
+        count = 0;
+    }
+    else
+    {
+        integral += cur_magpsi - deg;
+    }
+    
+    printf("%d %f\n", count, cur_magpsi);
+    count++;
+    
+    signal = Kp * error + Kd * derivative - Ki * integral;
     
     //    printf("heading %f error %f magpsi %f\n", heading, error, cur_magpsi);
     
     ap_roll(signal);
 }
 
+/*
+ * Main autopilot loop
+ */
 void * ap_loop()
 {
     while(1)
     {
         ap_heading(heading);
         ap_elev(elev_meters);
-        usleep(100000);
+        usleep(dt);
     }
 }
