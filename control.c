@@ -16,13 +16,15 @@
 #include "ui.h"
 
 #define DOWN_LIMIT -5.0F
-#define UP_LIMIT 5.0F
-#define DIFF_RATIO 0.7
+#define UP_LIMIT    5.0F
+#define DIFF_RATIO  0.7
 
-#define MAX_ELEVATOR 24
+#define MAX_ELEVATOR  24
 #define MIN_ELEVATOR -24
 
-#define K_p 1
+#define CLIMB_LIMIT     800
+#define DESCEND_LIMIT  -800
+
 
 static int result;
 float roll_deg;
@@ -111,8 +113,13 @@ void set_ailerons(float deg)
     XPLMSetDataf(aileron4_ref, right);
 }
 
+float get_heading()
+{
+    return XPLMGetDataf(magpsi);
+}
+
 /*
- * set desired heading
+ * Set desired heading
  */
 void set_heading(float deg)
 {
@@ -125,7 +132,7 @@ double get_elevation()
 }
 
 /*
- * set desired altitude in meters
+ * Set desired altitude in meters
  */
 
 void set_elevation(double meters)
@@ -134,7 +141,7 @@ void set_elevation(double meters)
 }
 
 /*
- * set desired roll angle 
+ * Set desired roll angle 
  */
 void set_roll(float deg)
 {
@@ -152,8 +159,9 @@ void set_elevator(float degrees)
 //    XPLMSetDataf(rudder4, degrees);
 }
 
-
-// control climb rate
+/*
+ * Control climb rate
+ */
 void ap_climb(float feet)
 {
     static float Kp = 0.005f;
@@ -161,35 +169,45 @@ void ap_climb(float feet)
     static float signal;
     static float rate;
     
+    if(feet >  CLIMB_LIMIT)   { feet = CLIMB_LIMIT;   }
+    if(feet <  DESCEND_LIMIT) { feet = DESCEND_LIMIT; }
+    
     rate  = XPLMGetDataf(VVI);
     error = rate - feet;
     
     // climbing limits
-    if(error >  800) { error =  800; }
-    if(error < -800) { error = -800; }
+    if(error >  CLIMB_LIMIT)   { error = CLIMB_LIMIT;   }
+    if(error <  DESCEND_LIMIT) { error = DESCEND_LIMIT; }
     
     signal = Kp * error;
     
     set_elevator(signal);
 }
 
-
-// control elevator to reach altitude
+/*
+ * Control elevator to reach altitude
+ */
 void ap_elev(float meters)
 {
-    static double Kp = 50;
+    static double Kp = 50.0;
     static double error;
     static double signal;
     static double cur_elev;
     
     cur_elev = XPLMGetDatad(elevation);
-    error = cur_elev - meters;
-    
-    signal = -Kp * error;
+    error    = cur_elev - meters;
+    signal   = -Kp * error;
     
     ap_climb(signal);
 }
 
+/*
+ * Return current roll
+ */
+float get_roll()
+{
+    return XPLMGetDataf(phi);
+}
 
 /*
  * Roll at given angle
@@ -198,25 +216,34 @@ void ap_roll(float deg)
 {
     /* left -, right + */
     static float cur_phi;
-    static float result;
-    /* TODO make portable for HIL simulation */
-    cur_phi = XPLMGetDataf(phi);
-    result = K_p * (deg - cur_phi);
-    if(cur_phi > 20.0F)  { result =  -5; }
+    static float signal;
+    static float error;
+    static float Kp = 1.0f;
+    
+    cur_phi = get_roll();
+    error   = deg - cur_phi;
+    signal  = Kp * error;
+    
+    if(cur_phi >  20.0F) { result = -5; }
     if(cur_phi < -20.0F) { result =  5; }
 
-    set_ailerons(result);
+    set_ailerons(signal);
 }
 
 void ap_heading(float deg)
 {
     static float cur_magpsi;
-    static float error = 0;
-    cur_magpsi = XPLMGetDataf(magpsi);
-    error = heading - cur_magpsi;
-    printf("heading %f error %f magpsi %f\n",heading, error, cur_magpsi);
+    static float error;
+    static float signal;
+    static float Kp = 1.0f;
+
+    cur_magpsi = get_heading();
+    error      = heading - cur_magpsi;
+    signal     = Kp * error;
     
-    ap_roll(error);
+    //    printf("heading %f error %f magpsi %f\n", heading, error, cur_magpsi);
+    
+    ap_roll(signal);
 }
 
 void * ap_loop()
