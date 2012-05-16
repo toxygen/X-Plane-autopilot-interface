@@ -17,6 +17,10 @@
 
 #define DOWN_LIMIT -5.0F
 #define UP_LIMIT 5.0F
+#define DIFF_RATIO 0.7
+
+#define MAX_ELEVATOR 24
+#define MIN_ELEVATOR -24
 
 #define K_p 1
 
@@ -79,7 +83,7 @@ void set_ailerons(float deg)
     /* turning left */
     if(deg > 0)
     {
-        left  = 0.7 * deg;
+        left  = DIFF_RATIO * deg;
         right = -deg;
         
         /* enforce limits */
@@ -91,7 +95,7 @@ void set_ailerons(float deg)
     else
     {
         left  = deg;
-        right = 0.7 * -deg;
+        right = DIFF_RATIO * -deg;
         
         /* enforce limits */
         if(left  < DOWN_LIMIT)  { left  = DOWN_LIMIT; }
@@ -115,6 +119,11 @@ void set_heading(float deg)
     heading = deg;
 }
 
+double get_elevation()
+{
+    return XPLMGetDatad(elevation);
+}
+
 /*
  * set desired altitude in meters
  */
@@ -134,33 +143,53 @@ void set_roll(float deg)
 
 void set_elevator(float degrees)
 {
-    if(degrees >  5) { degrees =  5; }
-    if(degrees < -5) { degrees = -5; }
+    // 
+    if(degrees > MAX_ELEVATOR) { degrees =  MAX_ELEVATOR; }
+    if(degrees < MIN_ELEVATOR) { degrees =  MIN_ELEVATOR; }
     XPLMSetDataf(rudder1, degrees);
     XPLMSetDataf(rudder2, degrees);
-    XPLMSetDataf(rudder3, degrees);
-    XPLMSetDataf(rudder4, degrees);
+//    XPLMSetDataf(rudder3, degrees);
+//    XPLMSetDataf(rudder4, degrees);
 }
 
+
+// control climb rate
+void ap_climb(float feet)
+{
+    static float Kp = 0.005f;
+    static float error;
+    static float signal;
+    static float rate;
+    
+    rate  = XPLMGetDataf(VVI);
+    error = rate - feet;
+    
+    // climbing limits
+    if(error >  800) { error =  800; }
+    if(error < -800) { error = -800; }
+    
+    signal = Kp * error;
+    
+    set_elevator(signal);
+}
+
+
+// control elevator to reach altitude
 void ap_elev(float meters)
 {
+    static double Kp = 50;
     static double error;
-    static double last = 0;
-    error = XPLMGetDatad(elevation) - last;
-    last = XPLMGetDatad(elevation);    
+    static double signal;
+    static double cur_elev;
     
-    //set_elevator(error);
-   /* if(XPLMGetDatad(elevation));
-    error = last - XPLMGetDatad(elevation);
-    if(error > 20) { error = -2; }
-    else
-    if(error < 0)  { error = 5; }
-    else { error = 0; }
-
-
+    cur_elev = XPLMGetDatad(elevation);
+    error = cur_elev - meters;
     
-    set_elevator(error);*/
+    signal = -Kp * error;
+    
+    ap_climb(signal);
 }
+
 
 /*
  * Roll at given angle
@@ -195,7 +224,7 @@ void * ap_loop()
     while(1)
     {
         ap_heading(heading);
-        //ap_elev(elev_meters);
+        ap_elev(elev_meters);
         usleep(100000);
     }
 }

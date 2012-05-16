@@ -50,7 +50,7 @@ char * user_home()
     return pw->pw_dir;
 }
 
-
+// read input from file
 void * read_datain()
 {
     FILE * fp;
@@ -70,7 +70,6 @@ void * read_datain()
             pthread_mutex_lock(&console_m);
             printf("autopilot %s\n", str_old);
             pthread_mutex_unlock(&console_m);
-            
         }
         usleep(500000);
     }

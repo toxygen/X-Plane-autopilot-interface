@@ -18,7 +18,7 @@ extern XPLMDataRef magpsi;
 extern XPLMDataRef elevation;
 extern XPLMDataRef rudder1;
 extern XPLMDataRef rudder2;
-extern XPLMDataRef rudder3;
+extern XPLMDataRef VVI;
 extern XPLMDataRef rudder4;
 
 void parse_command(char *);
