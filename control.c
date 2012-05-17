@@ -249,7 +249,7 @@ void ap_heading(float deg)
     static float integral = 0;
     static float last = 0;
     static float Kp = 1.0f;
-    static float Kd = 1.0f;
+    static float Kd = 15.0f;
     static float Ki = 0.05f;
     static int count = 0;
     
@@ -273,7 +273,7 @@ void ap_heading(float deg)
     printf("%d %f\n", count, cur_magpsi);
     count++;
     
-    signal = Kp * error + Kd * derivative - Ki * integral;
+    signal = Kp * error + Kd * derivative; //- Ki * integral;
     
     //    printf("heading %f error %f magpsi %f\n", heading, error, cur_magpsi);
     
