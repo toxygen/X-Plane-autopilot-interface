@@ -166,6 +166,8 @@ PLUGIN_API int XPluginStart(
     
     rc = pthread_create(&threads[0], NULL, server, NULL);
     rc = pthread_create(&threads[1], NULL, ap_loop, NULL);
+    rc = pthread_create(&threads[2], NULL, ap_log, NULL);
+    
     pthread_attr_destroy(&attr);
     return 1;
 }
@@ -186,6 +188,7 @@ PLUGIN_API void XPluginDisable(void)
 {
     pthread_cancel(threads[0]);
     pthread_cancel(threads[1]);
+    pthread_cancel(threads[2]);
     pthread_mutex_destroy(&lines_m);
 }
 
@@ -228,6 +231,7 @@ void MyDrawWindowCallback(
     float throttle[8];
     
     XPLMGetDatavf(throttle_ref, throttle, 0, 8);
+    
     
     set_heading(240.0f);
     set_elevation(1000);

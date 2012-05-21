@@ -34,6 +34,7 @@
 
 int s1, s2;
 int len;
+extern int ap;
 
 struct sockaddr_un local, remote;
 
@@ -76,6 +77,18 @@ void send_msg(int socket, char * s)
 void send_nmsg(int socket, char * s, int n)
 {
     send(socket, s, n, 0);
+}
+
+void * ap_log()
+{
+    int count = 0;
+    while(1)
+    {
+        usleep(100000);
+        if(!ap) { count = 0; }
+   //     printf("%d %f %f\n", count, XPLMGetDataf(magpsi), XPLMGetDataf(phi));
+        count++;
+    }
 }
 
 /*

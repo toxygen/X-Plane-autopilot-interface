@@ -7,7 +7,6 @@
 //
 
 #include <stdio.h>
-
 #include <string.h>
 #include <math.h>
 #include <float.h>
@@ -15,8 +14,16 @@
 #include "control.h"
 #include "ui.h"
 
-#define DOWN_LIMIT -5.0F
-#define UP_LIMIT    5.0F
+
+// ----
+#include <sys/time.h>  
+
+struct timeval t1, t2;
+double elapsedTime;
+// -----
+
+#define DOWN_LIMIT -5.0f
+#define UP_LIMIT    5.0f
 #define DIFF_RATIO  0.7
 
 #define MAX_ELEVATOR  24
@@ -26,11 +33,18 @@
 #define DESCEND_LIMIT  -800
 #define MAX_ROLL 20
 
+#define FREQ_TIME 100000 // microseconds = 0.1s = 10Hz
+#define FREQ      (1000000.0f / FREQ_TIME) 
+#define DT        (FREQ_TIME / 100000.0f)
+
+#define OUT_COEF_ELEV 0.24f
+#define OUT_COEF_AIL  0.05f
+
 static int result;
 float  roll_deg;
 float  heading;
 double elev_meters;
-int    dt = 100000; // microseconds = 0.1s
+
 int    ap = 0;
 
 
@@ -83,8 +97,8 @@ int ap_off()
  */
 void set_ailerons(float deg)
 {
-    static float left  = 0;
-    static float right = 0;
+    static float left  = 0.0f;
+    static float right = 0.0f;
 
     /* turning left */
     if(deg > 0)
@@ -107,6 +121,9 @@ void set_ailerons(float deg)
         if(left  < DOWN_LIMIT)  { left  = DOWN_LIMIT; }
         if(right > UP_LIMIT)    { right = UP_LIMIT;   }
     }
+
+    left  = (left  / UP_LIMIT) * 100.0f * OUT_COEF_AIL;
+    right = (right / UP_LIMIT) * 100.0f * OUT_COEF_AIL;
     
     /* flight model */
     XPLMSetDataf(aileron1_ref, left);
@@ -122,7 +139,11 @@ void set_ailerons(float deg)
  */
 float get_heading()
 {
-    return XPLMGetDataf(magpsi);
+    float cur_psi;
+    cur_psi = XPLMGetDataf(magpsi);
+    if(cur_psi > 360.0f) { cur_psi = fmod(cur_psi, 360.0f); }
+    if(cur_psi < 0.0f)   { cur_psi = fmod(cur_psi, 360.0f) + 360.0f; }
+    return cur_psi;
 }
 
 /*
@@ -130,6 +151,8 @@ float get_heading()
  */
 void set_heading(float deg)
 {
+    if(deg > 360.0f) { deg = fmod(deg, 360.0f); }
+    if(deg < 0.0f)   { deg = 360.0f + fmod(deg, 360.0f); }
     heading = deg;
 }
 
@@ -157,9 +180,11 @@ void set_roll(float deg)
 
 void set_elevator(float degrees)
 {
-    // 
+    degrees = (degrees / MAX_ELEVATOR) * 100 * OUT_COEF_ELEV;
+    
     if(degrees > MAX_ELEVATOR) { degrees =  MAX_ELEVATOR; }
     if(degrees < MIN_ELEVATOR) { degrees =  MIN_ELEVATOR; }
+    
     XPLMSetDataf(rudder1, degrees);
     XPLMSetDataf(rudder2, degrees);
 //    XPLMSetDataf(rudder3, degrees);
@@ -176,15 +201,15 @@ void ap_climb(float feet)
     static float signal;
     static float rate;
     
-    if(feet >  CLIMB_LIMIT)   { feet = CLIMB_LIMIT;   }
-    if(feet <  DESCEND_LIMIT) { feet = DESCEND_LIMIT; }
+    if(feet > CLIMB_LIMIT)   { feet = CLIMB_LIMIT;   }
+    if(feet < DESCEND_LIMIT) { feet = DESCEND_LIMIT; }
     
     rate  = XPLMGetDataf(VVI);
     error = rate - feet;
     
     // climbing limits
-    if(error >  CLIMB_LIMIT)   { error = CLIMB_LIMIT;   }
-    if(error <  DESCEND_LIMIT) { error = DESCEND_LIMIT; }
+    if(error > CLIMB_LIMIT)   { error = CLIMB_LIMIT;   }
+    if(error < DESCEND_LIMIT) { error = DESCEND_LIMIT; }
     
     signal = Kp * error;
     
@@ -213,7 +238,19 @@ void ap_elev(float meters)
  */
 float get_roll()
 {
-    return XPLMGetDataf(phi);
+    float roll;
+    roll = XPLMGetDataf(phi);
+    if(roll > 180.0f) 
+    { 
+        roll  = fmod(roll, 180.0f);
+        roll -= 180.0f; 
+    }
+    if(roll < -180.0f) 
+    { 
+        roll  = fmod(roll, 180.0f);
+        roll += 180.0f; 
+    }
+    return roll;
 }
 
 /*
@@ -226,6 +263,7 @@ void ap_roll(float deg)
     static float signal;
     static float error;
     static float Kp = 1.0f;
+    static int count = 0;
     
     if(deg >  MAX_ROLL) { deg =  MAX_ROLL; }
     if(deg < -MAX_ROLL) { deg = -MAX_ROLL; }
@@ -238,6 +276,9 @@ void ap_roll(float deg)
     if(cur_phi < -20.0F) { result =  5; }
 
     set_ailerons(signal);
+    if(!ap) { count = 0; }
+//    printf("%d %f\n", count, cur_phi);
+    count++;
 }
 
 void ap_heading(float deg)
@@ -249,14 +290,14 @@ void ap_heading(float deg)
     static float integral = 0;
     static float last = 0;
     static float Kp = 1.0f;
-    static float Kd = 15.0f;
-    static float Ki = 0.05f;
-    static int count = 0;
+    static float Kd = 10.0f;
+    static float Ki = 0.01f;
+    static int   count = 0;
     
     cur_magpsi = get_heading();
-    error      = heading - cur_magpsi;
+    error      = deg - cur_magpsi;
     
-    derivative = cur_magpsi - last;
+    derivative = (cur_magpsi - last) / DT;
     last = cur_magpsi;
     
     // integrate only if autopilot turned on
@@ -267,15 +308,16 @@ void ap_heading(float deg)
     }
     else
     {
-        integral += cur_magpsi - deg;
+        integral += DT * fmod(error, 2);
     }
+ 
     
-    printf("%d %f\n", count, cur_magpsi);
+//    printf("%d %f %f\n", count, integral, cur_magpsi);
     count++;
     
-    signal = Kp * error + Kd * derivative; //- Ki * integral;
-    
-    //    printf("heading %f error %f magpsi %f\n", heading, error, cur_magpsi);
+    signal = Kp * error + Kd * derivative + Ki * integral;
+//    printf("%d %f\n", count, integral);    
+//    printf("integral %f heading %f error %f magpsi %f\n", integral, heading, error, cur_magpsi);
     
     ap_roll(signal);
 }
@@ -287,8 +329,13 @@ void * ap_loop()
 {
     while(1)
     {
+        gettimeofday(&t1, NULL);
         ap_heading(heading);
         ap_elev(elev_meters);
-        usleep(dt);
+        gettimeofday(&t2, NULL);
+        elapsedTime = (t2.tv_sec - t1.tv_sec) * 1000.0;      // sec to ms
+        elapsedTime += (t2.tv_usec - t1.tv_usec) / 1000.0;   // us to ms
+        printf("%f ms\n", elapsedTime);
+        usleep(FREQ_TIME);
     }
 }
